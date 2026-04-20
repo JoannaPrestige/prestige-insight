@@ -1,0 +1,2762 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prestige Insight | Prestige Lingua</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy:#0C1F3F; --navy-mid:#152B52; --navy-light:#1E3A6A;
+  --gold:#C9A84C; --gold-light:#E8C96A; --gold-pale:#F7EDD0;
+  --cream:#FDFAF4; --white:#FFFFFF;
+  --slate:#6B7A94; --slate-light:#A8B3C8; --border:#DDE3ED;
+  --weak:#C94C4C; --weak-bg:#FDF0F0; --weak-border:#F5A5A5;
+  --ok:#D97706; --ok-bg:#FEF3E2; --ok-border:#F5C06A;
+  --strong:#166534; --strong-bg:#DCFCE7; --strong-border:#7ED6A5;
+  --sh-sm:0 1px 3px rgba(12,31,63,.08);
+  --sh-md:0 4px 16px rgba(12,31,63,.12);
+  --sh-lg:0 8px 32px rgba(12,31,63,.18);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--navy);min-height:100vh;}
+
+/* HEADER */
+.hdr{background:var(--navy);height:60px;padding:0 32px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;box-shadow:0 2px 12px rgba(0,0,0,.35);}
+.hdr-logo{display:flex;align-items:center;gap:11px;}
+.logo-mark{width:34px;height:34px;background:var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:700;color:var(--navy);}
+.logo-text{font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:600;color:#fff;}
+.logo-sub{font-size:10px;color:var(--gold);letter-spacing:2px;text-transform:uppercase;font-weight:500;}
+.hdr-right{display:flex;align-items:center;gap:12px;}
+.timer-badge{background:var(--navy-light);border:1px solid rgba(201,168,76,.3);color:var(--gold-light);padding:4px 12px;border-radius:20px;font-size:13px;font-weight:600;font-variant-numeric:tabular-nums;}
+.timer-badge.warn{color:#F87171;border-color:rgba(248,113,113,.4);}
+.hdr-btn{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);color:var(--slate-light);padding:5px 12px;border-radius:6px;cursor:pointer;font-size:12px;font-family:inherit;transition:all .15s;}
+.hdr-btn:hover{background:rgba(255,255,255,.12);color:#fff;}
+.save-indicator{font-size:11px;color:var(--gold);opacity:0;transition:opacity .3s;}
+.save-indicator.show{opacity:1;}
+
+/* STEPS */
+.steps-wrap{background:var(--navy-mid);padding:0 32px;}
+.steps{display:flex;max-width:860px;margin:0 auto;}
+.step-btn{flex:1;padding:11px 6px;background:none;border:none;border-bottom:3px solid transparent;cursor:pointer;color:var(--slate-light);font-size:11px;font-family:'DM Sans',sans-serif;font-weight:500;letter-spacing:.5px;text-transform:uppercase;transition:all .2s;display:flex;flex-direction:column;align-items:center;gap:3px;}
+.step-num{width:20px;height:20px;border-radius:50%;border:1.5px solid currentColor;display:flex;align-items:center;justify-content:center;font-size:10px;transition:all .2s;}
+.step-btn.active{color:var(--gold);border-bottom-color:var(--gold);}
+.step-btn.active .step-num{background:var(--gold);border-color:var(--gold);color:var(--navy);}
+.step-btn.done{color:#5DB87A;border-bottom-color:rgba(93,184,122,.35);}
+.step-btn.done .step-num{background:rgba(93,184,122,.15);border-color:#5DB87A;color:#5DB87A;}
+
+/* MAIN */
+.main{max-width:860px;margin:0 auto;padding:28px 20px 80px;}
+.section{display:none;}
+.section.active{display:block;animation:fadeUp .25s ease;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+
+/* TYPOGRAPHY */
+.page-title{font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:600;line-height:1.2;margin-bottom:3px;}
+.page-sub{font-size:13px;color:var(--slate);margin-bottom:24px;display:flex;align-items:center;gap:7px;flex-wrap:wrap;}
+.dot{width:4px;height:4px;background:var(--gold);border-radius:50%;display:inline-block;flex-shrink:0;}
+.time-chip{background:var(--gold-pale);color:var(--gold);border:1px solid rgba(201,168,76,.4);padding:2px 10px;border-radius:12px;font-size:12px;font-weight:600;}
+
+/* CARDS */
+.card{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:24px;box-shadow:var(--sh-sm);margin-bottom:16px;}
+.card-title{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;color:var(--navy);margin-bottom:14px;display:flex;align-items:center;gap:9px;}
+
+/* FORM */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.form-group{display:flex;flex-direction:column;gap:5px;}
+.form-group.full{grid-column:1/-1;}
+.form-label{font-size:11px;font-weight:600;color:var(--slate);text-transform:uppercase;letter-spacing:.9px;}
+.form-input{background:#F8F9FB;border:1.5px solid var(--border);border-radius:8px;padding:9px 13px;font-size:14px;font-family:'DM Sans',sans-serif;color:var(--navy);outline:none;transition:border-color .2s,background .2s;}
+.form-input:focus{border-color:var(--gold);background:var(--white);}
+
+/* INTRO TIMING */
+.intro-timing{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:16px;}
+.timing-item{background:var(--cream);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center;}
+.timing-skill{font-size:11px;font-weight:600;color:var(--slate);text-transform:uppercase;letter-spacing:.7px;margin-bottom:4px;}
+.timing-time{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:700;color:var(--navy);}
+.timing-unit{font-size:11px;color:var(--slate);}
+
+/* SKILL INTRO */
+.skill-intro{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:16px 20px;margin-bottom:20px;display:flex;align-items:flex-start;gap:14px;box-shadow:var(--sh-sm);}
+.skill-icon{width:44px;height:44px;background:var(--navy);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
+.skill-info h3{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:600;margin-bottom:3px;}
+.skill-info p{font-size:13px;color:var(--slate);line-height:1.55;}
+
+/* LEVEL BLOCK */
+.level-block{background:var(--white);border:1.5px solid var(--border);border-radius:12px;margin-bottom:12px;overflow:hidden;box-shadow:var(--sh-sm);transition:border-color .2s,box-shadow .2s;}
+.level-block.rated-weak{border-color:var(--weak-border);}
+.level-block.rated-ok{border-color:var(--ok-border);}
+.level-block.rated-strong{border-color:var(--strong-border);}
+.level-block:focus-within{box-shadow:var(--sh-md);}
+
+.level-hdr{display:flex;align-items:center;justify-content:space-between;padding:13px 18px;cursor:pointer;user-select:none;transition:background .15s;}
+.level-hdr:hover{background:rgba(12,31,63,.02);}
+.lvl-left{display:flex;align-items:center;gap:11px;}
+.lvl-badge{background:var(--navy);color:var(--gold);font-family:'Cormorant Garamond',serif;font-size:15px;font-weight:700;padding:3px 11px;border-radius:6px;letter-spacing:.3px;min-width:42px;text-align:center;}
+.lvl-title{font-size:13.5px;font-weight:500;color:var(--navy);}
+.lvl-sub{font-size:11.5px;color:var(--slate);font-weight:400;margin-top:1px;}
+.lvl-right{display:flex;align-items:center;gap:8px;}
+.rating-pill{padding:3px 11px;border-radius:20px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;}
+.rating-pill.none{background:#F3F4F6;color:var(--slate);}
+.rating-pill.weak{background:var(--weak-bg);color:var(--weak);}
+.rating-pill.ok{background:var(--ok-bg);color:var(--ok);}
+.rating-pill.strong{background:var(--strong-bg);color:var(--strong);}
+.toggle-ico{color:var(--slate-light);font-size:16px;transition:transform .2s;}
+
+.level-body{display:none;padding:0 18px 18px;border-top:1px solid var(--border);}
+.level-body.open{display:block;}
+
+/* TEST TEXT */
+.test-label{font-size:11px;font-weight:600;color:var(--slate);text-transform:uppercase;letter-spacing:.9px;margin:14px 0 7px;}
+.test-text{background:#F8F9FB;border:1px solid var(--border);border-radius:8px;padding:13px 15px;font-size:13.5px;line-height:1.7;color:var(--navy);}
+.test-text strong{font-weight:600;color:var(--navy-light);}
+.test-text em{font-style:italic;color:var(--slate);}
+
+.qa-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;}
+.qa-item{background:var(--cream);border:1px solid var(--border);border-radius:8px;padding:9px 13px;}
+.qa-q{font-size:11.5px;color:var(--slate);margin-bottom:3px;}
+.qa-a{font-size:13px;font-weight:600;color:var(--navy);}
+
+/* WRITING RUBRIC */
+.rubric-wrap{margin-top:14px;background:#F8F9FB;border:1px solid var(--border);border-radius:10px;overflow:hidden;}
+.rubric-row{display:grid;grid-template-columns:140px 1fr;align-items:center;border-bottom:1px solid var(--border);padding:0;}
+.rubric-row:last-child{border-bottom:none;}
+.rubric-criterion{padding:10px 14px;font-size:12.5px;font-weight:500;color:var(--navy);background:#F3F5F9;border-right:1px solid var(--border);}
+.rubric-criterion small{display:block;font-size:11px;color:var(--slate);font-weight:400;margin-top:1px;}
+.rubric-btns{display:flex;gap:6px;padding:8px 12px;}
+.rub-btn{flex:1;padding:6px 8px;border-radius:6px;border:1.5px solid transparent;cursor:pointer;font-size:11.5px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;font-family:inherit;background:#EAEDF2;color:var(--slate);transition:all .15s;}
+.rub-btn:hover{transform:translateY(-1px);}
+.rub-btn.weak.active{background:var(--weak-bg);border-color:var(--weak);color:var(--weak);}
+.rub-btn.ok.active{background:var(--ok-bg);border-color:var(--ok);color:var(--ok);}
+.rub-btn.strong.active{background:var(--strong-bg);border-color:var(--strong);color:var(--strong);}
+
+/* WRITING TASK */
+.writing-task{background:linear-gradient(135deg,rgba(201,168,76,.09),rgba(201,168,76,.02));border:1px solid rgba(201,168,76,.35);border-radius:8px;padding:13px 15px;margin:12px 0;}
+.task-lbl{font-size:11px;font-weight:600;color:var(--gold);text-transform:uppercase;letter-spacing:.9px;margin-bottom:5px;}
+.task-txt{font-size:14px;color:var(--navy);font-weight:500;}
+.model-txt{margin-top:9px;font-size:13px;color:var(--slate);font-style:italic;line-height:1.55;}
+.model-txt span{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.9px;color:var(--slate-light);font-style:normal;margin-right:5px;}
+
+/* DESCRIPTOR */
+.descriptor{background:var(--navy);color:var(--gold-pale);font-size:12.5px;padding:9px 13px;border-radius:7px;margin:10px 0;line-height:1.6;}
+.descriptor strong{color:var(--gold);}
+
+/* RATING SECTION */
+.rating-section{margin-top:14px;padding-top:14px;border-top:1px dashed var(--border);}
+.rating-lbl{font-size:11px;font-weight:600;color:var(--slate);text-transform:uppercase;letter-spacing:.8px;margin-bottom:9px;}
+.rating-btns{display:flex;gap:9px;}
+.rate-btn{flex:1;padding:9px 10px;border-radius:8px;border:1.5px solid transparent;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.7px;background:#F3F4F6;color:var(--slate);transition:all .15s;}
+.rate-btn:hover{transform:translateY(-1px);box-shadow:var(--sh-sm);}
+.rate-btn.weak.active{background:var(--weak-bg);border-color:var(--weak);color:var(--weak);}
+.rate-btn.ok.active{background:var(--ok-bg);border-color:var(--ok);color:var(--ok);}
+.rate-btn.strong.active{background:var(--strong-bg);border-color:var(--strong);color:var(--strong);}
+.comment-wrap{margin-top:9px;}
+.comment-input{width:100%;background:#F8F9FB;border:1.5px solid var(--border);border-radius:8px;padding:8px 12px;font-size:13px;font-family:'DM Sans',sans-serif;color:var(--navy);resize:vertical;min-height:56px;outline:none;transition:border-color .2s;}
+.comment-input:focus{border-color:var(--gold);background:var(--white);}
+.comment-input::placeholder{color:var(--slate-light);}
+
+/* ── ADAPTIVE NUDGE ── */
+.nudge{display:none;margin-top:12px;padding:11px 14px;border-radius:9px;font-size:13px;align-items:center;gap:10px;justify-content:space-between;}
+.nudge.show{display:flex;animation:fadeUp .2s ease;}
+.nudge.strong-nudge{background:var(--strong-bg);border:1px solid var(--strong-border);}
+.nudge.ok-nudge{background:var(--ok-bg);border:1px solid var(--ok-border);}
+.nudge.weak-nudge{background:var(--weak-bg);border:1px solid var(--weak-border);}
+.nudge-text{font-size:13px;line-height:1.4;}
+.nudge-text strong{font-weight:600;}
+.nudge-btns{display:flex;gap:7px;flex-shrink:0;}
+.nudge-btn{padding:5px 13px;border-radius:6px;font-size:12px;font-weight:600;font-family:inherit;cursor:pointer;border:1.5px solid;transition:all .15s;}
+.nudge-btn:hover{transform:translateY(-1px);}
+.nudge-btn.yes-btn{background:var(--navy);border-color:var(--navy);color:var(--gold);}
+.nudge-btn.skip-btn{background:transparent;color:var(--slate);}
+.nudge-btn.skip-btn.weak-skip{border-color:var(--weak-border);}
+.nudge-btn.skip-btn.ok-skip{border-color:var(--ok-border);}
+.nudge-btn.skip-btn.strong-skip{border-color:var(--strong-border);}
+
+/* NAV BUTTONS */
+.nav-btns{display:flex;justify-content:space-between;align-items:center;margin-top:28px;padding-top:22px;border-top:1px solid var(--border);}
+.btn{padding:11px 26px;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;border:none;transition:all .15s;display:flex;align-items:center;gap:7px;}
+.btn-primary{background:var(--navy);color:var(--gold);}
+.btn-primary:hover{background:var(--navy-light);transform:translateY(-1px);box-shadow:var(--sh-md);}
+.btn-ghost{background:transparent;color:var(--slate);border:1.5px solid var(--border);}
+.btn-ghost:hover{border-color:var(--navy);color:var(--navy);}
+.btn-gold{background:var(--gold);color:var(--navy);}
+.btn-gold:hover{background:var(--gold-light);transform:translateY(-1px);box-shadow:0 4px 16px rgba(201,168,76,.3);}
+
+/* ═══ SUMMARY ═══ */
+.summary-tabs{display:flex;gap:0;margin-bottom:20px;border-bottom:2px solid var(--border);}
+.sum-tab{padding:10px 20px;background:none;border:none;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;color:var(--slate);cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;transition:all .2s;}
+.sum-tab.active{color:var(--navy);border-bottom-color:var(--gold);}
+.sum-panel{display:none;}
+.sum-panel.active{display:block;animation:fadeUp .2s ease;}
+
+/* SUMMARY HERO */
+.summary-hero{background:var(--navy);border-radius:14px;padding:28px 32px;margin-bottom:22px;display:flex;align-items:center;justify-content:space-between;gap:20px;box-shadow:var(--sh-lg);}
+.sh-level{display:flex;flex-direction:column;gap:3px;}
+.sh-lbl{font-size:11px;color:var(--slate-light);text-transform:uppercase;letter-spacing:1.5px;font-weight:600;}
+.sh-val{font-family:'Cormorant Garamond',serif;font-size:72px;font-weight:700;color:var(--gold);line-height:1;letter-spacing:-2px;}
+.sh-name{font-size:14px;color:var(--slate-light);}
+.sh-skills{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.sh-skill{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:9px;padding:11px 14px;}
+.sh-skill-name{font-size:11px;color:var(--slate-light);text-transform:uppercase;letter-spacing:.9px;margin-bottom:3px;}
+.sh-skill-lvl{font-size:22px;font-family:'Cormorant Garamond',serif;font-weight:600;color:#fff;}
+.sh-skill-rat{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.6px;margin-top:1px;}
+.sh-skill-rat.weak{color:#F87171;}
+.sh-skill-rat.ok{color:#FCD34D;}
+.sh-skill-rat.strong{color:#6EE7B7;}
+.sh-skill-rat.none{color:var(--slate-light);}
+
+/* SKILLS TABLE */
+.skills-tbl{background:var(--white);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:20px;box-shadow:var(--sh-sm);}
+.tbl-hdr{background:#F3F5F9;padding:11px 18px;display:grid;grid-template-columns:2fr 1.2fr 1fr 3fr;gap:10px;font-size:11px;font-weight:600;color:var(--slate);text-transform:uppercase;letter-spacing:.9px;border-bottom:1px solid var(--border);}
+.tbl-row{padding:12px 18px;display:grid;grid-template-columns:2fr 1.2fr 1fr 3fr;gap:10px;align-items:start;border-bottom:1px solid #F3F4F6;font-size:13px;}
+.tbl-row:last-child{border-bottom:none;}
+.tbl-skill{font-weight:500;}
+.tbl-skill small{display:block;font-size:11.5px;color:var(--slate);font-weight:400;margin-top:2px;line-height:1.4;}
+.tbl-lvl{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:700;color:var(--navy);}
+.tbl-comment{font-size:12px;color:var(--slate);line-height:1.5;}
+
+/* COURSE CHIPS */
+.course-card{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:22px;margin-bottom:20px;box-shadow:var(--sh-sm);}
+.course-card h3{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;margin-bottom:5px;}
+.course-hint{font-size:12.5px;color:var(--slate);margin-bottom:14px;}
+.course-chips{display:flex;flex-wrap:wrap;gap:9px;}
+.course-chip{padding:7px 15px;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;border:1.5px solid var(--border);background:#F3F5F9;color:var(--navy);transition:all .15s;}
+.course-chip:hover{background:var(--gold-pale);border-color:rgba(201,168,76,.5);}
+.course-chip.selected{background:var(--navy);color:var(--gold);border-color:var(--navy);}
+.course-chip.recommended{border-color:var(--gold);background:var(--gold-pale);font-weight:600;}
+.course-chip.recommended.selected{background:var(--navy);}
+
+/* NOTES */
+.notes-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.notes-ta{width:100%;background:#F8F9FB;border:1.5px solid var(--border);border-radius:8px;padding:9px 13px;font-size:13px;font-family:'DM Sans',sans-serif;color:var(--navy);resize:vertical;min-height:76px;outline:none;transition:border-color .2s;}
+.notes-ta:focus{border-color:var(--gold);background:var(--white);}
+
+/* ═══ PARENT REPORT ═══ */
+#parent-report{max-width:680px;margin:0 auto;}
+.pr-header{background:var(--navy);border-radius:14px;padding:28px 32px;margin-bottom:20px;color:#fff;text-align:center;}
+.pr-logo{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:600;color:var(--gold);margin-bottom:4px;}
+.pr-title{font-size:13px;color:var(--slate-light);letter-spacing:1px;text-transform:uppercase;}
+.pr-meta{display:flex;justify-content:center;gap:24px;margin-top:16px;flex-wrap:wrap;}
+.pr-meta-item{text-align:center;}
+.pr-meta-label{font-size:10px;color:var(--slate-light);text-transform:uppercase;letter-spacing:1px;}
+.pr-meta-value{font-size:15px;font-weight:600;color:#fff;margin-top:2px;}
+
+.pr-level-banner{background:var(--gold-pale);border:2px solid rgba(201,168,76,.5);border-radius:12px;padding:20px 24px;margin-bottom:18px;text-align:center;}
+.pr-level-label{font-size:12px;color:var(--slate);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;}
+.pr-level-val{font-family:'Cormorant Garamond',serif;font-size:52px;font-weight:700;color:var(--navy);line-height:1;}
+.pr-level-name{font-size:15px;color:var(--navy);font-weight:500;margin-top:4px;}
+.pr-level-desc{font-size:13px;color:var(--slate);margin-top:8px;line-height:1.6;}
+
+.pr-section{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:20px 22px;margin-bottom:14px;box-shadow:var(--sh-sm);}
+.pr-section-title{font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:600;color:var(--navy);margin-bottom:12px;padding-bottom:9px;border-bottom:1px solid var(--border);}
+.pr-skill-list{display:flex;flex-direction:column;gap:9px;}
+.pr-skill-item{display:flex;align-items:flex-start;gap:11px;padding:10px 14px;border-radius:8px;background:#F8F9FB;border:1px solid var(--border);}
+.pr-skill-ico{font-size:20px;flex-shrink:0;margin-top:1px;}
+.pr-skill-body{}
+.pr-skill-name{font-size:13px;font-weight:600;color:var(--navy);margin-bottom:2px;}
+.pr-skill-desc{font-size:13px;color:var(--slate);line-height:1.5;}
+.pr-can{font-size:12.5px;color:var(--strong);font-weight:500;}
+
+.pr-courses{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;}
+.pr-course-tag{background:var(--navy);color:var(--gold);padding:6px 14px;border-radius:7px;font-size:13px;font-weight:600;}
+
+.pr-comment-box{background:#F8F9FB;border:1px solid var(--border);border-radius:8px;padding:14px 16px;font-size:13px;color:var(--navy);line-height:1.65;min-height:60px;font-style:italic;}
+.pr-footer{text-align:center;font-size:12px;color:var(--slate);margin-top:18px;line-height:1.7;}
+.pr-footer a{color:var(--navy);font-weight:600;text-decoration:none;}
+
+/* PRINT */
+@media print{
+  .hdr,.steps-wrap,.nav-btns,.summary-tabs,.sum-panel:not(#sum-parent),.rating-btns,.nudge,.comment-wrap,.course-chips,.notes-grid .form-group,.btn-gold,.btn-ghost,.btn-primary{display:none!important;}
+  .sum-panel#sum-parent{display:block!important;}
+  .section{display:block!important;}
+  .section:not(#sec-5){display:none!important;}
+  body{background:white;}
+  .summary-hero,.pr-header{-webkit-print-color-adjust:exact;color-adjust:exact;}
+  #parent-report{max-width:100%;}
+}
+
+/* ── INTAKE FORM ── */
+.intake-options{display:flex;flex-wrap:wrap;gap:7px;margin-top:7px;}
+.intake-opt{padding:6px 13px;border-radius:20px;border:1.5px solid var(--border);background:#F3F5F9;color:var(--navy);font-family:inherit;font-size:12.5px;font-weight:500;cursor:pointer;transition:all .15s;}
+.intake-opt:hover{background:var(--gold-pale);border-color:rgba(201,168,76,.5);}
+.intake-opt.selected{background:var(--navy);color:var(--gold);border-color:var(--navy);}
+.intake-opt.multi{border-radius:8px;}
+
+/* SESSION BANNER */
+.session-banner{background:#FFF8E6;border:1px solid rgba(201,168,76,.4);border-radius:10px;padding:11px 16px;margin-bottom:18px;font-size:13px;color:var(--navy);display:flex;align-items:center;gap:10px;justify-content:space-between;}
+.session-banner.hidden{display:none;}
+
+/* ── SPEAKING QUESTION BANK ── */
+.spk-qlist{display:flex;flex-direction:column;gap:0;margin:8px 0;background:var(--white);border:1px solid var(--border);border-radius:9px;overflow:hidden;}
+.spk-q-item{display:flex;align-items:flex-start;gap:10px;padding:10px 14px;border-bottom:1px solid #F3F4F6;transition:background .1s;}
+.spk-q-item:last-child{border-bottom:none;}
+.spk-q-item:hover{background:rgba(12,31,63,.02);}
+.spk-q-item.backup{background:#FAFBFC;}
+.spk-q-num{width:22px;height:22px;background:var(--navy);color:var(--gold);border-radius:50%;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;font-family:'Cormorant Garamond',serif;}
+.spk-q-item.backup .spk-q-num{background:#E8EDF5;color:var(--slate);font-size:10px;}
+.spk-q-body{flex:1;}
+.spk-q-text{font-size:13.5px;color:var(--navy);font-weight:500;line-height:1.45;margin-bottom:5px;}
+.spk-hint-btn{background:none;border:1px solid var(--border);border-radius:5px;padding:2px 9px;font-size:11px;color:var(--slate);cursor:pointer;font-family:inherit;transition:all .15s;}
+.spk-hint-btn:hover{background:var(--gold-pale);border-color:rgba(201,168,76,.5);color:var(--navy);}
+.spk-hint{display:none;margin-top:7px;background:var(--gold-pale);border:1px solid rgba(201,168,76,.4);border-radius:7px;padding:8px 12px;font-size:12.5px;color:var(--navy);line-height:1.65;}
+.spk-hint.show{display:block;animation:fadeUp .15s ease;}
+.spk-hint em{font-style:normal;background:rgba(201,168,76,.3);padding:1px 6px;border-radius:4px;margin:0 2px;font-weight:500;}
+.spk-more-btn{width:100%;margin:8px 0 4px;padding:9px 14px;background:#F3F5F9;border:1.5px dashed var(--border);border-radius:8px;color:var(--slate);font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;text-align:center;}
+.spk-more-btn:hover{background:var(--gold-pale);border-color:rgba(201,168,76,.5);color:var(--navy);}
+.spk-more-btn.hidden{display:none;}
+.spk-backup{display:none;flex-direction:column;}
+.spk-backup.show{display:flex;}
+.spk-backup-label{font-size:11px;font-weight:600;color:var(--slate);text-transform:uppercase;letter-spacing:.9px;padding:10px 14px 2px;}
+/* ── SPEAKING TIMER ── */
+.spk-timer-wrap{display:flex;align-items:center;gap:6px;}
+.spk-timer-display{font-variant-numeric:tabular-nums;font-size:14px;font-weight:700;color:var(--slate);font-family:'DM Sans',sans-serif;min-width:38px;text-align:right;}
+.spk-timer-display.running{color:var(--strong);}
+.spk-timer-display.warn{color:var(--ok);animation:pulse 1s infinite;}
+.spk-timer-display.done{color:var(--weak);}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.5;}}
+.spk-timer-btn{width:26px;height:26px;border-radius:50%;background:var(--navy-mid);border:none;color:var(--gold);font-size:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0;}
+.spk-timer-btn:hover{background:var(--navy-light);transform:scale(1.1);}
+.spk-timer-btn.running{background:var(--ok);color:#fff;}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:5px;}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+
+/* ── VALIDATION MODAL ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(12,31,63,.6);z-index:999;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(3px);animation:fadeUp .2s ease;}
+.modal-overlay.hidden{display:none;}
+.modal-box{background:var(--white);border-radius:16px;padding:28px 32px;max-width:480px;width:100%;box-shadow:var(--sh-lg);}
+.modal-icon{font-size:36px;margin-bottom:12px;}
+.modal-title{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;color:var(--navy);margin-bottom:8px;}
+.modal-body{font-size:13.5px;color:var(--slate);line-height:1.65;margin-bottom:20px;}
+.modal-skill-list{margin:12px 0;display:flex;flex-direction:column;gap:6px;}
+.modal-skill-item{display:flex;align-items:center;gap:9px;padding:8px 12px;border-radius:8px;font-size:13px;font-weight:500;}
+.modal-skill-item.missing{background:var(--weak-bg);color:var(--weak);border:1px solid var(--weak-border);}
+.modal-skill-item.done{background:var(--strong-bg);color:var(--strong);border:1px solid var(--strong-border);}
+.modal-btns{display:flex;gap:10px;justify-content:flex-end;}
+.modal-btn{padding:9px 20px;border-radius:8px;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all .15s;}
+.modal-btn-primary{background:var(--navy);color:var(--gold);}
+.modal-btn-primary:hover{background:var(--navy-light);}
+.modal-btn-ghost{background:transparent;color:var(--slate);border:1.5px solid var(--border);}
+.modal-btn-ghost:hover{border-color:var(--navy);color:var(--navy);}
+
+/* ── AI REPORT ── */
+.ai-section{margin-bottom:16px;}
+.ai-generate-btn{width:100%;padding:14px 20px;background:linear-gradient(135deg,var(--navy),var(--navy-light));border:none;border-radius:10px;color:var(--gold);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;transition:all .2s;letter-spacing:.3px;}
+.ai-generate-btn:hover{transform:translateY(-1px);box-shadow:var(--sh-md);}
+.ai-generate-btn:disabled{opacity:.6;cursor:not-allowed;transform:none;}
+.ai-loading{display:none;text-align:center;padding:24px;color:var(--slate);}
+.ai-loading.show{display:block;}
+.ai-spinner{width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 12px;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.ai-result{display:none;background:var(--white);border:1.5px solid rgba(201,168,76,.4);border-radius:12px;padding:20px 22px;margin-top:12px;}
+.ai-result.show{display:block;animation:fadeUp .3s ease;}
+.ai-result-text{font-size:13.5px;color:var(--navy);line-height:1.8;white-space:pre-wrap;}
+.ai-result-actions{margin-top:14px;padding-top:12px;border-top:1px solid var(--border);display:flex;gap:9px;flex-wrap:wrap;}
+.ai-action-btn{padding:6px 14px;border-radius:6px;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid;transition:all .15s;}
+.ai-regen-btn{background:transparent;border-color:var(--navy);color:var(--navy);}
+.ai-copy-btn{background:var(--navy);border-color:var(--navy);color:var(--gold);}
+.ai-hint{font-size:12px;color:var(--slate);margin-top:10px;font-style:italic;}
+
+/* ── PRINT / PDF ── */
+@media print{
+  @page{size:A4;margin:18mm 20mm;}
+  *{-webkit-print-color-adjust:exact!important;color-adjust:exact!important;print-color-adjust:exact!important;}
+  .hdr,.steps-wrap,.nav-btns,.summary-tabs,.sum-panel:not(#sum-parent),.rating-btns,.nudge,.comment-wrap,.course-chips,.card,.ai-section,.session-banner{display:none!important;}
+  .sum-panel#sum-parent{display:block!important;}
+  .section{display:block!important;}
+  .section:not(#sec-5){display:none!important;}
+  body{background:white;font-size:12pt;}
+  #parent-report{max-width:100%!important;}
+  .pr-header{background:var(--navy)!important;border-radius:8px;page-break-after:avoid;}
+  .pr-level-banner{page-break-after:avoid;}
+  .pr-section{page-break-inside:avoid;margin-bottom:12px;}
+  .pr-skill-item{page-break-inside:avoid;}
+  .pr-footer{margin-top:24px;padding-top:12px;border-top:1px solid var(--border);}
+  .pr-footer::after{content:"Wydrukowano: " attr(data-date);display:block;font-size:10pt;color:#999;margin-top:4px;}
+  h1,h2,h3{page-break-after:avoid;}
+}
+</style>
+</head>
+<body>
+
+<header class="hdr">
+  <div class="hdr-logo">
+    <div class="logo-mark">PL</div>
+    <div>
+      <div class="logo-text">Prestige Lingua</div>
+      <div class="logo-sub">Prestige Insight &nbsp;·&nbsp; A1–C2</div>
+    </div>
+  </div>
+  <div class="hdr-right">
+    <span class="save-indicator" id="saveInd">💾 Zapisano</span>
+    <div class="timer-badge" id="timerDisp">00:00</div>
+    <button class="hdr-btn" id="timerBtn" onclick="toggleTimer()">▶ Start</button>
+    <button class="hdr-btn" onclick="newSession()" title="Wyczyść i zacznij nową sesję">↺ Nowa sesja</button>
+  </div>
+</header>
+
+<div class="steps-wrap">
+  <div class="steps">
+    <button class="step-btn active" onclick="goTo(0)" id="step-0"><div class="step-num">1</div><span>Dane</span></button>
+    <button class="step-btn" onclick="goTo(1)" id="step-1"><div class="step-num">👪</div><span>Rodzic</span></button>
+    <button class="step-btn" onclick="goTo(2)" id="step-2"><div class="step-num">🎧</div><span>Listening</span></button>
+    <button class="step-btn" onclick="goTo(3)" id="step-3"><div class="step-num">📖</div><span>Reading</span></button>
+    <button class="step-btn" onclick="goTo(4)" id="step-4"><div class="step-num">✍️</div><span>Writing</span></button>
+    <button class="step-btn" onclick="goTo(5)" id="step-5"><div class="step-num">🗣</div><span>Speaking</span></button>
+    <button class="step-btn" onclick="goTo(6)" id="step-6"><div class="step-num">📊</div><span>Wynik</span></button>
+  </div>
+</div>
+
+<main class="main">
+
+<!-- ═══ 0 — DANE ═══ -->
+<section class="section active" id="sec-0">
+  <div class="page-title">Prestige Insight</div>
+  <div class="page-sub">Prestige Lingua <span class="dot"></span> Protokół A1–C2 <span class="dot"></span> CEFR</div>
+
+  <div id="session-banner" class="session-banner hidden">
+    📂 <span id="session-banner-text">Wczytano poprzednią sesję.</span>
+    <button class="hdr-btn" onclick="newSession()" style="font-size:12px;">Wyczyść sesję</button>
+  </div>
+
+  <div class="card" style="margin-bottom:16px;">
+    <div class="card-title">📋 Instrukcja dla lektora</div>
+    <div style="font-size:13.5px;color:var(--slate);line-height:1.75;">
+      Ewaluacja trwa maks. <strong style="color:var(--navy);">20 minut</strong>. Oceń tylko tyle poziomów, ile potrzebujesz — ewaluator podpowiada kiedy przejść wyżej lub zatrzymać się.<br><br>
+      <strong style="color:var(--weak);">Weak</strong> — błędy zakłócają rozumienie, pytanie ledwo udzielone &nbsp;|&nbsp;
+      <strong style="color:var(--ok);">OK</strong> — błędy obecne, nie zakłócają rozumienia &nbsp;|&nbsp;
+      <strong style="color:var(--strong);">Strong</strong> — błędy rzadkie, odpowiedź wyczerpująca i łatwa
+    </div>
+    <div class="intro-timing">
+      <div class="timing-item"><div class="timing-skill">🎧 Listening</div><div class="timing-time">5</div><div class="timing-unit">min</div></div>
+      <div class="timing-item"><div class="timing-skill">📖 Reading</div><div class="timing-time">5</div><div class="timing-unit">min</div></div>
+      <div class="timing-item"><div class="timing-skill">✍️ Writing</div><div class="timing-time">5</div><div class="timing-unit">min</div></div>
+      <div class="timing-item"><div class="timing-skill">🗣 Speaking</div><div class="timing-time">5</div><div class="timing-unit">min</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">👤 Dane ucznia</div>
+    <div class="form-grid">
+      <div class="form-group"><label class="form-label">Imię ucznia</label><input class="form-input" id="fname" placeholder="np. Anna" oninput="saveField('fname',this.value)"></div>
+      <div class="form-group"><label class="form-label">Nazwisko ucznia</label><input class="form-input" id="lname" placeholder="np. Kowalska" oninput="saveField('lname',this.value)"></div>
+      <div class="form-group"><label class="form-label">Data ewaluacji</label><input class="form-input" id="evalDate" type="date" onchange="saveField('evalDate',this.value)"></div>
+      <div class="form-group"><label class="form-label">Lektor</label><input class="form-input" id="lektor" placeholder="np. Joanna Gabryś-Trybała" oninput="saveField('lektor',this.value)"></div>
+      <div class="form-group">
+        <label class="form-label">Wiek / Typ ucznia</label>
+        <select class="form-input" id="ageType" onchange="saveField('ageType',this.value)">
+          <option value="">Wybierz...</option>
+          <option value="child">Dziecko (7–11 lat)</option>
+          <option value="teen">Nastolatek (11–14 lat)</option>
+          <option value="teen2">Nastolatek (14–18 lat)</option>
+          <option value="adult">Dorosły (18+)</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Lokalizacja</label>
+        <select class="form-input" id="location" onchange="saveField('location',this.value)">
+          <option value="">Wybierz...</option>
+          <option>Gdańsk Wrzeszcz, ul. Wajdeloty</option>
+          <option>Gdańsk Południe – Jasień / Lawendowe Wzgórze</option>
+          <option>Straszyn, ul. Leśna 2</option>
+          <option>Online</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="nav-btns"><div></div><button class="btn btn-primary" onclick="goTo(1)">Wywiad z rodzicem →</button></div>
+</section>
+
+<!-- ═══ 1 — WYWIAD Z RODZICEM ═══ -->
+<section class="section" id="sec-1">
+  <div class="page-title">👪 Wywiad z rodzicem</div>
+  <div class="page-sub">Formularz wstępny <span class="dot"></span> wypełnij razem z rodzicem przed ewaluacją</div>
+
+  <div class="skill-intro">
+    <div class="skill-icon">👪</div>
+    <div class="skill-info">
+      <h3>Jak korzystać</h3>
+      <p>Zadaj pytania w rozmowie — nie dawaj rodzicowi formularza do samodzielnego wypełnienia. Twoje obserwacje są równie ważne jak odpowiedzi. Na końcu system sugeruje grupę na podstawie całego wywiadu.</p>
+    </div>
+  </div>
+
+  <!-- BLOK 1: CEL -->
+  <div class="card" style="margin-bottom:14px;">
+    <div class="card-title" style="font-size:17px;">🎯 Cel i motywacja</div>
+
+    <div class="form-group" style="margin-bottom:14px;">
+      <label class="form-label">1. Co skłoniło Państwa do zapisania dziecka właśnie teraz?</label>
+      <div class="intake-options" id="q-trigger">
+        <button class="intake-opt" onclick="toggleIntake('q-trigger','Słabe oceny w szkole')">Słabe oceny w szkole</button>
+        <button class="intake-opt" onclick="toggleIntake('q-trigger','Własna inicjatywa dziecka')">Własna inicjatywa dziecka</button>
+        <button class="intake-opt" onclick="toggleIntake('q-trigger','Presja rodziców')">Inicjatywa rodzica</button>
+        <button class="intake-opt" onclick="toggleIntake('q-trigger','Zmiana szkoły / poziomu')">Zmiana szkoły / klasy</button>
+        <button class="intake-opt" onclick="toggleIntake('q-trigger','Wyjazd / podróż')">Planowany wyjazd</button>
+        <button class="intake-opt" onclick="toggleIntake('q-trigger','Poprzedni kurs nie działał')">Poprzedni kurs nie działał</button>
+      </div>
+      <textarea class="comment-input" id="note-trigger" placeholder="Dopowiedz własnymi słowami..." style="margin-top:8px;" oninput="saveIntakeNote('trigger',this.value)"></textarea>
+    </div>
+
+    <div class="form-group" style="margin-bottom:14px;">
+      <label class="form-label">2. Czego chce Pani/Pan osiągnąć po roku nauki?</label>
+      <div class="intake-options" id="q-goal">
+        <button class="intake-opt" onclick="toggleIntake('q-goal','Lepsze oceny w szkole')">Lepsze oceny w szkole</button>
+        <button class="intake-opt" onclick="toggleIntake('q-goal','Swobodne mówienie')">Swobodne mówienie</button>
+        <button class="intake-opt" onclick="toggleIntake('q-goal','Egzamin Cambridge')">Egzamin Cambridge</button>
+        <button class="intake-opt" onclick="toggleIntake('q-goal','Ogólny rozwój')">Ogólny rozwój</button>
+        <button class="intake-opt" onclick="toggleIntake('q-goal','Nadrobienie zaległości')">Nadrobienie zaległości</button>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">3. Wyobraź sobie dziecko za rok — co chcesz, żeby umiało, czego dziś nie umie?</label>
+      <textarea class="comment-input" id="note-vision" placeholder="Np. żeby mówiło bez wstydu, żeby rozumiało filmy, żeby zdało do klasy dwujęzycznej..." oninput="saveIntakeNote('vision',this.value)"></textarea>
+    </div>
+  </div>
+
+  <!-- BLOK 2: SZKOŁA -->
+  <div class="card" style="margin-bottom:14px;">
+    <div class="card-title" style="font-size:17px;">🏫 Angielski w szkole</div>
+
+    <div class="form-group" style="margin-bottom:14px;">
+      <label class="form-label">4. Jakie oceny z angielskiego ma dziecko w szkole?</label>
+      <div class="intake-options" id="q-grade">
+        <button class="intake-opt" onclick="toggleIntake('q-grade','1-2 (niedostateczny/dopuszczający)')">1–2</button>
+        <button class="intake-opt" onclick="toggleIntake('q-grade','3 (dostateczny)')">3</button>
+        <button class="intake-opt" onclick="toggleIntake('q-grade','4 (dobry)')">4</button>
+        <button class="intake-opt" onclick="toggleIntake('q-grade','5 (bardzo dobry)')">5</button>
+        <button class="intake-opt" onclick="toggleIntake('q-grade','6 (celujący)')">6</button>
+        <button class="intake-opt" onclick="toggleIntake('q-grade','Brak oceny / przedszkole')">Brak / przedszkole</button>
+      </div>
+    </div>
+
+    <div class="form-group" style="margin-bottom:14px;">
+      <label class="form-label">5. Zależy Państwu bardziej na przerabianiu materiału szkolnego, czy na własnej ścieżce?</label>
+      <div class="intake-options" id="q-school-align">
+        <button class="intake-opt" onclick="toggleIntake('q-school-align','Materiał ze szkoły — ten sam podręcznik')">Ten sam materiał co w szkole</button>
+        <button class="intake-opt" onclick="toggleIntake('q-school-align','Własna ścieżka — komunikacja i mówienie')">Własna ścieżka — mówienie i komunikacja</button>
+        <button class="intake-opt" onclick="toggleIntake('q-school-align','Połączenie obu')">Połączenie obu</button>
+        <button class="intake-opt" onclick="toggleIntake('q-school-align','Nie mam zdania')">Zdaję się na lektora</button>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">6. Czy dziecko miało już kontakt z angielskim poza szkołą?</label>
+      <div class="intake-options" id="q-prior">
+        <button class="intake-opt" onclick="toggleIntake('q-prior','Poprzedni kurs językowy')">Poprzedni kurs</button>
+        <button class="intake-opt" onclick="toggleIntake('q-prior','Seriale / YouTube po angielsku')">Seriale / YouTube</button>
+        <button class="intake-opt" onclick="toggleIntake('q-prior','Gry komputerowe po angielsku')">Gry komputerowe</button>
+        <button class="intake-opt" onclick="toggleIntake('q-prior','Wyjazd zagraniczny')">Wyjazd zagraniczny</button>
+        <button class="intake-opt" onclick="toggleIntake('q-prior','Brak dodatkowego kontaktu')">Brak</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- BLOK 3: DZIECKO -->
+  <div class="card" style="margin-bottom:14px;">
+    <div class="card-title" style="font-size:17px;">🧒 Dziecko — charakter i styl uczenia</div>
+
+    <div class="form-group" style="margin-bottom:14px;">
+      <label class="form-label">7. Jak dziecko reaguje na naukę?</label>
+      <div class="intake-options" id="q-attitude">
+        <button class="intake-opt" onclick="toggleIntake('q-attitude','Chętnie siada samo')">Chętnie siada samo</button>
+        <button class="intake-opt" onclick="toggleIntake('q-attitude','Z lekką presją')">Z lekką presją</button>
+        <button class="intake-opt" onclick="toggleIntake('q-attitude','Tylko z dużą presją')">Tylko z dużą presją</button>
+        <button class="intake-opt" onclick="toggleIntake('q-attitude','Zależy od dnia i humoru')">Zależy od dnia</button>
+        <button class="intake-opt" onclick="toggleIntake('q-attitude','Lubi naukę przez zabawę / aktywność')">Lubi przez zabawę</button>
+      </div>
+    </div>
+
+    <div class="form-group" style="margin-bottom:14px;">
+      <label class="form-label">8. W jakiej grupie dziecko lepiej funkcjonuje?</label>
+      <div class="intake-options" id="q-group-pref">
+        <button class="intake-opt" onclick="toggleIntake('q-group-pref','Mała kameralna — 3-4 osoby')">Mała, kameralna (3–4 os.)</button>
+        <button class="intake-opt" onclick="toggleIntake('q-group-pref','Większa dynamiczna — 6-8 osób')">Większa, dynamiczna (6–8 os.)</button>
+        <button class="intake-opt" onclick="toggleIntake('q-group-pref','Indywidualnie')">Indywidualnie</button>
+        <button class="intake-opt" onclick="toggleIntake('q-group-pref','Bez preferencji')">Bez preferencji</button>
+      </div>
+    </div>
+
+    <div class="form-group" style="margin-bottom:14px;">
+      <label class="form-label">9. Co dziecko lubi robić po szkole? (pasje, zainteresowania)</label>
+      <div class="intake-options" id="q-hobbies">
+        <button class="intake-opt" onclick="toggleIntake('q-hobbies','Sport')">Sport</button>
+        <button class="intake-opt" onclick="toggleIntake('q-hobbies','Gry komputerowe / Minecraft')">Gry / Minecraft</button>
+        <button class="intake-opt" onclick="toggleIntake('q-hobbies','Muzyka')">Muzyka</button>
+        <button class="intake-opt" onclick="toggleIntake('q-hobbies','Czytanie')">Czytanie</button>
+        <button class="intake-opt" onclick="toggleIntake('q-hobbies','Seriale / YouTube / TikTok')">Seriale / TikTok</button>
+        <button class="intake-opt" onclick="toggleIntake('q-hobbies','Sztuka / rysunek')">Sztuka</button>
+        <button class="intake-opt" onclick="toggleIntake('q-hobbies','Zwierzęta / natura')">Zwierzęta / przyroda</button>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">10. Czy dziecko ma jakieś szczególne potrzeby edukacyjne?</label>
+      <div class="intake-options" id="q-needs">
+        <button class="intake-opt" onclick="toggleIntake('q-needs','Dysleksja')">Dysleksja</button>
+        <button class="intake-opt" onclick="toggleIntake('q-needs','Trudności z koncentracją / ADHD')">ADHD / koncentracja</button>
+        <button class="intake-opt" onclick="toggleIntake('q-needs','Wolniejsze tempo')">Wolniejsze tempo</button>
+        <button class="intake-opt" onclick="toggleIntake('q-needs','Nieśmiałość / lęk przed mówieniem')">Nieśmiałość / lęk</button>
+        <button class="intake-opt" onclick="toggleIntake('q-needs','Brak szczególnych potrzeb')">Brak</button>
+      </div>
+      <textarea class="comment-input" id="note-needs" placeholder="Dodatkowe informacje..." style="margin-top:8px;" oninput="saveIntakeNote('needs',this.value)"></textarea>
+    </div>
+  </div>
+
+  <!-- BLOK 4: CZAS -->
+  <div class="card" style="margin-bottom:14px;">
+    <div class="card-title" style="font-size:17px;">⏱ Czas i zaangażowanie</div>
+
+    <div class="form-group" style="margin-bottom:14px;">
+      <label class="form-label">11. Ile czasu dziecko może realnie poświęcić na angielski poza zajęciami?</label>
+      <div class="intake-options" id="q-time">
+        <button class="intake-opt" onclick="toggleIntake('q-time','Do 15 minut dziennie')">Do 15 min dziennie</button>
+        <button class="intake-opt" onclick="toggleIntake('q-time','15-30 minut dziennie')">15–30 min dziennie</button>
+        <button class="intake-opt" onclick="toggleIntake('q-time','30-60 minut dziennie')">30–60 min dziennie</button>
+        <button class="intake-opt" onclick="toggleIntake('q-time','Tylko w dni zajęć — brak pracy własnej')">Tylko w dni zajęć</button>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">12. Ile zajęć tygodniowo planują Państwo?</label>
+      <div class="intake-options" id="q-freq">
+        <button class="intake-opt" onclick="toggleIntake('q-freq','1 raz w tygodniu')">1 × tydzień</button>
+        <button class="intake-opt" onclick="toggleIntake('q-freq','2 razy w tygodniu')">2 × tydzień</button>
+        <button class="intake-opt" onclick="toggleIntake('q-freq','3 lub więcej')">3 × lub więcej</button>
+        <button class="intake-opt" onclick="toggleIntake('q-freq','Intensywnie — wakacje / nadrobienie')">Intensywnie</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- BLOK 5: OBSERWACJE LEKTORA -->
+  <div class="card" style="margin-bottom:14px;">
+    <div class="card-title" style="font-size:17px;">🔍 Obserwacje lektora</div>
+    <div style="font-size:12.5px;color:var(--slate);margin-bottom:12px;">Twoje wrażenia z rozmowy — niewidoczne dla rodzica w raporcie końcowym.</div>
+
+    <div class="form-group" style="margin-bottom:14px;">
+      <label class="form-label">Jak oceniasz zaangażowanie rodzica?</label>
+      <div class="intake-options" id="q-parent-eng">
+        <button class="intake-opt" onclick="toggleIntake('q-parent-eng','Bardzo zaangażowany — pyta, dopytuje')">Bardzo zaangażowany</button>
+        <button class="intake-opt" onclick="toggleIntake('q-parent-eng','Zaangażowany — słucha uważnie')">Zaangażowany</button>
+        <button class="intake-opt" onclick="toggleIntake('q-parent-eng','Neutralny — zapisuje i wychodzi')">Neutralny</button>
+        <button class="intake-opt" onclick="toggleIntake('q-parent-eng','Sceptyczny — wymaga przekonania')">Sceptyczny</button>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Dodatkowe obserwacje lektora</label>
+      <textarea class="comment-input" id="note-lektor-obs" placeholder="Np. dziecko chętnie rozmawiało podczas oczekiwania, rodzic wspomniał o problemach z dykcją, poprzednia szkoła zraziła dziecko..." style="min-height:70px;" oninput="saveIntakeNote('lektor-obs',this.value)"></textarea>
+    </div>
+  </div>
+
+  <!-- SUGESTIA GRUPY -->
+  <div class="card" id="group-suggestion-card" style="background:var(--navy);border-color:var(--navy);margin-bottom:14px;">
+    <div style="font-size:11px;font-weight:600;color:var(--gold);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">🎯 Sugestia grupy</div>
+    <div id="group-suggestion-text" style="font-size:15px;color:var(--gold-pale);line-height:1.7;">
+      Wypełnij formularz powyżej — sugestia grupy pojawi się tutaj automatycznie.
+    </div>
+    <div id="group-suggestion-detail" style="font-size:13px;color:var(--slate-light);margin-top:8px;line-height:1.65;"></div>
+    <div style="margin-top:14px;">
+      <label class="form-label" style="color:var(--slate-light);">Finalna decyzja metodyka</label>
+      <textarea class="comment-input" id="note-group-final" placeholder="Wpisz wybraną grupę i uzasadnienie..." style="background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.15);color:var(--gold-pale);" oninput="saveIntakeNote('group-final',this.value)"></textarea>
+    </div>
+  </div>
+
+  <div class="nav-btns">
+    <button class="btn btn-ghost" onclick="goTo(0)">← Dane</button>
+    <button class="btn btn-primary" onclick="goTo(2)">Listening →</button>
+  </div>
+</section>
+
+
+
+<!-- ═══ 1 — LISTENING ═══ -->
+<section class="section" id="sec-2">
+  <div class="page-title">🎧 Listening</div>
+  <div class="page-sub">Rozumienie ze słuchu <span class="dot"></span> <span class="time-chip">5 min</span></div>
+  <div class="skill-intro">
+    <div class="skill-icon">🎧</div>
+    <div class="skill-info">
+      <h3>Instrukcja</h3>
+      <p>Zacznij od A1–A2. Odczytaj tekst wyraźnie i sprawdź rozumienie. Po ocenie system podpowie, czy iść wyżej.</p>
+    </div>
+  </div>
+
+  <!-- L A1 -->
+  <div class="level-block" id="lb-l-A1">
+    <div class="level-hdr" onclick="toggleLevel('l-A1')">
+      <div class="lvl-left"><span class="lvl-badge">A1–A2</span><div><div class="lvl-title">Prosty dialog — gdzie jest kot?</div><div class="lvl-sub">Tom & Anna · słownictwo codzienne</div></div></div>
+      <div class="lvl-right"><span class="rating-pill none" id="pill-l-A1">— brak</span><span class="toggle-ico" id="ti-l-A1">▾</span></div>
+    </div>
+    <div class="level-body open" id="body-l-A1">
+      <div class="test-label">📢 Tekst do odczytania</div>
+      <div class="test-text"><strong>Tom:</strong> Hi, Anna! Where is your cat?<br><strong>Anna:</strong> Oh, my cat is not at home. He is in the park with my brother.<br><strong>Tom:</strong> Great! I will go and see them.</div>
+      <div class="test-label">❓ Pytanie i odpowiedź</div>
+      <div class="qa-grid" style="grid-template-columns:1fr;">
+        <div class="qa-item"><div class="qa-q">Where is the cat? (At home / At school / At the park)</div><div class="qa-a">✓ At the park</div></div>
+      </div>
+      <div class="rating-section">
+        <div class="rating-lbl">Ocena</div>
+        <div class="rating-btns">
+          <button class="rate-btn weak" onclick="setRating('l','A1','Weak')">✗ Weak</button>
+          <button class="rate-btn ok" onclick="setRating('l','A1','OK')">~ OK</button>
+          <button class="rate-btn strong" onclick="setRating('l','A1','Strong')">✓ Strong</button>
+        </div>
+        <div id="nudge-l-A1" class="nudge"><div class="nudge-text"></div><div class="nudge-btns"></div></div>
+        <div class="comment-wrap"><textarea class="comment-input" id="comm-l-A1" placeholder="Komentarz (opcjonalny)..." oninput="saveComment('l','A1',this.value)"></textarea></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- L B1 -->
+  <div class="level-block" id="lb-l-B1">
+    <div class="level-hdr" onclick="toggleLevel('l-B1')">
+      <div class="lvl-left"><span class="lvl-badge">B1</span><div><div class="lvl-title">Dialog tematyczny — wycieczka w góry</div><div class="lvl-sub">Mary & John · szczegóły planu</div></div></div>
+      <div class="lvl-right"><span class="rating-pill none" id="pill-l-B1">— brak</span><span class="toggle-ico" id="ti-l-B1">▾</span></div>
+    </div>
+    <div class="level-body" id="body-l-B1">
+      <div class="test-label">📢 Tekst</div>
+      <div class="test-text"><strong>Mary:</strong> Hi, John! Are you ready for the trip tomorrow?<br><strong>John:</strong> Yes, I can't wait! We're going to the mountains with my classmates.<br><strong>Mary:</strong> How long are you staying there?<br><strong>John:</strong> Just for three days – from Friday to Sunday. We're going hiking, and on Saturday evening we're going to have a barbecue by the river.<br><strong>Mary:</strong> Are you staying in a hotel?<br><strong>John:</strong> No, we're renting a small house near the forest. It's cheaper and much more fun.</div>
+      <div class="test-label">❓ Pytania</div>
+      <div class="qa-grid">
+        <div class="qa-item"><div class="qa-q">Where are they going?</div><div class="qa-a">✓ The mountains</div></div>
+        <div class="qa-item"><div class="qa-q">How many days?</div><div class="qa-a">✓ Three days</div></div>
+        <div class="qa-item"><div class="qa-q">What on Saturday evening?</div><div class="qa-a">✓ Barbecue by the river</div></div>
+        <div class="qa-item"><div class="qa-q">Where are they staying?</div><div class="qa-a">✓ Small house near the forest</div></div>
+      </div>
+      <div class="rating-section">
+        <div class="rating-lbl">Ocena</div>
+        <div class="rating-btns">
+          <button class="rate-btn weak" onclick="setRating('l','B1','Weak')">✗ Weak</button>
+          <button class="rate-btn ok" onclick="setRating('l','B1','OK')">~ OK</button>
+          <button class="rate-btn strong" onclick="setRating('l','B1','Strong')">✓ Strong</button>
+        </div>
+        <div id="nudge-l-B1" class="nudge"><div class="nudge-text"></div><div class="nudge-btns"></div></div>
+        <div class="comment-wrap"><textarea class="comment-input" id="comm-l-B1" placeholder="Komentarz..." oninput="saveComment('l','B1',this.value)"></textarea></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- L B2 -->
+  <div class="level-block" id="lb-l-B2">
+    <div class="level-hdr" onclick="toggleLevel('l-B2')">
+      <div class="lvl-left"><span class="lvl-badge">B2</span><div><div class="lvl-title">Dialog z opiniami — Włochy latem</div><div class="lvl-sub">Alex & Sarah · opinie, preferencje</div></div></div>
+      <div class="lvl-right"><span class="rating-pill none" id="pill-l-B2">— brak</span><span class="toggle-ico" id="ti-l-B2">▾</span></div>
+    </div>
+    <div class="level-body" id="body-l-B2">
+      <div class="test-label">📢 Tekst</div>
+      <div class="test-text"><strong>Alex:</strong> I heard you're travelling this summer. Where are you going?<br><strong>Sarah:</strong> I'm flying to Italy — Rome, Florence, and Venice.<br><strong>Alex:</strong> How long will you stay?<br><strong>Sarah:</strong> About ten days. We'll see tourist attractions but also spend time in smaller towns.<br><strong>Alex:</strong> Do you prefer summer or winter travel?<br><strong>Sarah:</strong> Definitely summer — I love warm weather and walking around cities. I'd rather lie on a beach than ski in the cold.<br><strong>Alex:</strong> How are you travelling between cities?<br><strong>Sarah:</strong> Mostly by train — fast, comfortable, and great views.</div>
+      <div class="test-label">❓ Pytania</div>
+      <div class="qa-grid">
+        <div class="qa-item"><div class="qa-q">Which cities?</div><div class="qa-a">✓ Rome, Florence, Venice</div></div>
+        <div class="qa-item"><div class="qa-q">How long?</div><div class="qa-a">✓ 10 days</div></div>
+        <div class="qa-item"><div class="qa-q">Why summer travel?</div><div class="qa-a">✓ Warm weather, walking cities</div></div>
+        <div class="qa-item"><div class="qa-q">How between cities?</div><div class="qa-a">✓ By train</div></div>
+      </div>
+      <div class="rating-section">
+        <div class="rating-lbl">Ocena</div>
+        <div class="rating-btns">
+          <button class="rate-btn weak" onclick="setRating('l','B2','Weak')">✗ Weak</button>
+          <button class="rate-btn ok" onclick="setRating('l','B2','OK')">~ OK</button>
+          <button class="rate-btn strong" onclick="setRating('l','B2','Strong')">✓ Strong</button>
+        </div>
+        <div id="nudge-l-B2" class="nudge"><div class="nudge-text"></div><div class="nudge-btns"></div></div>
+        <div class="comment-wrap"><textarea class="comment-input" id="comm-l-B2" placeholder="Komentarz..." oninput="saveComment('l','B2',this.value)"></textarea></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- L C1 -->
+  <div class="level-block" id="lb-l-C1">
+    <div class="level-hdr" onclick="toggleLevel('l-C1')">
+      <div class="lvl-left"><span class="lvl-badge">C1</span><div><div class="lvl-title">Wypowiedź formalna — technologia i edukacja</div><div class="lvl-sub">Monolog radiowy · abstrakcja, argumenty</div></div></div>
+      <div class="lvl-right"><span class="rating-pill none" id="pill-l-C1">— brak</span><span class="toggle-ico" id="ti-l-C1">▾</span></div>
+    </div>
+    <div class="level-body" id="body-l-C1">
+      <div class="test-label">📢 Tekst</div>
+      <div class="test-text">In today's programme, we focus on the impact of technology on education. Online platforms have become extremely popular, offering flexibility and low cost. Many learners appreciate studying at their own pace. However, experts argue that digital tools cannot replace face-to-face interaction — human contact is essential for confidence and motivation. The challenge for the future is finding a balance: combining the flexibility of online tools with the personal support of a teacher.</div>
+      <div class="test-label">❓ Pytania</div>
+      <div class="qa-grid">
+        <div class="qa-item"><div class="qa-q">Advantages of online learning?</div><div class="qa-a">✓ Flexibility, low cost, self-paced</div></div>
+        <div class="qa-item"><div class="qa-q">Why criticised?</div><div class="qa-a">✓ Cannot replace human interaction</div></div>
+        <div class="qa-item"><div class="qa-q">What is the future challenge?</div><div class="qa-a">✓ Balance tools + personal teacher support</div></div>
+      </div>
+      <div class="rating-section">
+        <div class="rating-lbl">Ocena</div>
+        <div class="rating-btns">
+          <button class="rate-btn weak" onclick="setRating('l','C1','Weak')">✗ Weak</button>
+          <button class="rate-btn ok" onclick="setRating('l','C1','OK')">~ OK</button>
+          <button class="rate-btn strong" onclick="setRating('l','C1','Strong')">✓ Strong</button>
+        </div>
+        <div id="nudge-l-C1" class="nudge"><div class="nudge-text"></div><div class="nudge-btns"></div></div>
+        <div class="comment-wrap"><textarea class="comment-input" id="comm-l-C1" placeholder="Komentarz..." oninput="saveComment('l','C1',this.value)"></textarea></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- L C2 -->
+  <div class="level-block" id="lb-l-C2">
+    <div class="level-hdr" onclick="toggleLevel('l-C2')">
+      <div class="lvl-left"><span class="lvl-badge">C2</span><div><div class="lvl-title">Wykład akademicki — globalizacja i tożsamość</div><div class="lvl-sub">Monolog złożony · wiele perspektyw, wnioski</div></div></div>
+      <div class="lvl-right"><span class="rating-pill none" id="pill-l-C2">— brak</span><span class="toggle-ico" id="ti-l-C2">▾</span></div>
+    </div>
+    <div class="level-body" id="body-l-C2">
+      <div class="test-label">📢 Tekst</div>
+      <div class="test-text">Globalisation has made the world increasingly interconnected: access to international markets, cultural exchange, faster technological development. Yet it has created challenges — local traditions and languages are disappearing, communities feel their identity is under threat. English dominates business, which helps communication but may crowd out smaller languages. Some experts see this as inevitable and beneficial; others argue cultural diversity is essential. The key question: how do we enjoy globalisation's benefits without destroying what makes each culture unique? Perhaps education — teaching young people to value both global cooperation and local traditions — holds the answer.</div>
+      <div class="test-label">❓ Pytania</div>
+      <div class="qa-grid">
+        <div class="qa-item"><div class="qa-q">Advantages of globalisation?</div><div class="qa-a">✓ Markets, cultural exchange, tech</div></div>
+        <div class="qa-item"><div class="qa-q">Dangers?</div><div class="qa-a">✓ Loss of traditions, languages dying</div></div>
+        <div class="qa-item"><div class="qa-q">Expert disagreement?</div><div class="qa-a">✓ Some beneficial, others harmful</div></div>
+        <div class="qa-item"><div class="qa-q">Possible solution?</div><div class="qa-a">✓ Education valuing cooperation + local traditions</div></div>
+      </div>
+      <div class="rating-section">
+        <div class="rating-lbl">Ocena</div>
+        <div class="rating-btns">
+          <button class="rate-btn weak" onclick="setRating('l','C2','Weak')">✗ Weak</button>
+          <button class="rate-btn ok" onclick="setRating('l','C2','OK')">~ OK</button>
+          <button class="rate-btn strong" onclick="setRating('l','C2','Strong')">✓ Strong</button>
+        </div>
+        <div id="nudge-l-C2" class="nudge"><div class="nudge-text"></div><div class="nudge-btns"></div></div>
+        <div class="comment-wrap"><textarea class="comment-input" id="comm-l-C2" placeholder="Komentarz..." oninput="saveComment('l','C2',this.value)"></textarea></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="nav-btns">
+    <button class="btn btn-ghost" onclick="goTo(0)">← Wstecz</button>
+    <button class="btn btn-primary" onclick="goTo(2)">Reading →</button>
+  </div>
+</section>
+
+<!-- ═══ 2 — READING ═══ -->
+<section class="section" id="sec-3">
+  <div class="page-title">📖 Reading</div>
+  <div class="page-sub">Rozumienie tekstu <span class="dot"></span> <span class="time-chip">5 min</span></div>
+  <div class="skill-intro">
+    <div class="skill-icon">📖</div>
+    <div class="skill-info"><h3>Instrukcja</h3><p>Pokaż lub odczytaj tekst razem z uczniem. Sprawdź rozumienie przez pytania. System prowadzi od A1 w górę.</p></div>
+  </div>
+  <!-- Reading blocks A1–C2 — same pattern -->
+  <div class="level-block" id="lb-r-A1">
+    <div class="level-hdr" onclick="toggleLevel('r-A1')">
+      <div class="lvl-left"><span class="lvl-badge">A1</span><div><div class="lvl-title">Tekst osobisty — Kate z Gdańska</div><div class="lvl-sub">Imię, miejsce, hobby, weekend</div></div></div>
+      <div class="lvl-right"><span class="rating-pill none" id="pill-r-A1">— brak</span><span class="toggle-ico" id="ti-r-A1">▾</span></div>
+    </div>
+    <div class="level-body open" id="body-r-A1">
+      <div class="test-label">📄 Tekst</div>
+      <div class="test-text">Hello! My name is Kate. I live in Gdańsk with my family. I like football and riding my bike. At the weekend, I go to the park with friends.</div>
+      <div class="test-label">❓ Pytania</div>
+      <div class="qa-grid">
+        <div class="qa-item"><div class="qa-q">Where does Kate live?</div><div class="qa-a">✓ Gdańsk</div></div>
+        <div class="qa-item"><div class="qa-q">What does she like?</div><div class="qa-a">✓ Football and riding bike</div></div>
+        <div class="qa-item"><div class="qa-q">What does she do at weekends?</div><div class="qa-a">✓ Goes to the park with friends</div></div>
+      </div>
+      <div class="rating-section"><div class="rating-lbl">Ocena</div>
+        <div class="rating-btns">
+          <button class="rate-btn weak" onclick="setRating('r','A1','Weak')">✗ Weak</button>
+          <button class="rate-btn ok" onclick="setRating('r','A1','OK')">~ OK</button>
+          <button class="rate-btn strong" onclick="setRating('r','A1','Strong')">✓ Strong</button>
+        </div>
+        <div id="nudge-r-A1" class="nudge"><div class="nudge-text"></div><div class="nudge-btns"></div></div>
+        <div class="comment-wrap"><textarea class="comment-input" id="comm-r-A1" placeholder="Komentarz..." oninput="saveComment('r','A1',this.value)"></textarea></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="level-block" id="lb-r-A2">
+    <div class="level-hdr" onclick="toggleLevel('r-A2')">
+      <div class="lvl-left"><span class="lvl-badge">A2</span><div><div class="lvl-title">Relacja z wakacji — Daniel w Hiszpanii</div><div class="lvl-sub">Czas przeszły, szczegóły podróży</div></div></div>
+      <div class="lvl-right"><span class="rating-pill none" id="pill-r-A2">— brak</span><span class="toggle-ico" id="ti-r-A2">▾</span></div>
+    </div>
+    <div class="level-body" id="body-r-A2">
+      <div class="test-label">📄 Tekst</div>
+      <div class="test-text">Hi, I'm Daniel. Last summer I went to Spain. We stayed in a small hotel near the beach. The weather was sunny every day, and we went swimming. I also bought a T-shirt and a football.</div>
+      <div class="test-label">❓ Pytania</div>
+      <div class="qa-grid">
+        <div class="qa-item"><div class="qa-q">Where did he go?</div><div class="qa-a">✓ Spain</div></div>
+        <div class="qa-item"><div class="qa-q">Where did he stay?</div><div class="qa-a">✓ Small hotel near the beach</div></div>
+        <div class="qa-item"><div class="qa-q">What did he buy?</div><div class="qa-a">✓ T-shirt and football</div></div>
+      </div>
+      <div class="rating-section"><div class="rating-lbl">Ocena</div>
+        <div class="rating-btns">
+          <button class="rate-btn weak" onclick="setRating('r','A2','Weak')">✗ Weak</button>
+          <button class="rate-btn ok" onclick="setRating('r','A2','OK')">~ OK</button>
+          <button class="rate-btn strong" onclick="setRating('r','A2','Strong')">✓ Strong</button>
+        </div>
+        <div id="nudge-r-A2" class="nudge"><div class="nudge-text"></div><div class="nudge-btns"></div></div>
+        <div class="comment-wrap"><textarea class="comment-input" id="comm-r-A2" placeholder="Komentarz..." oninput="saveComment('r','A2',this.value)"></textarea></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="level-block" id="lb-r-B1">
+    <div class="level-hdr" onclick="toggleLevel('r-B1')">
+      <div class="lvl-left"><span class="lvl-badge">B1</span><div><div class="lvl-title">Tekst narracyjny — Laura, klub fotograficzny</div><div class="lvl-sub">Zainteresowania, plany przyszłościowe</div></div></div>
+      <div class="lvl-right"><span class="rating-pill none" id="pill-r-B1">— brak</span><span class="toggle-ico" id="ti-r-B1">▾</span></div>
+    </div>
+    <div class="level-body" id="body-r-B1">
+      <div class="test-label">📄 Tekst</div>
+      <div class="test-text">My name is Laura, and last year I joined a photography club. We meet every Thursday and go to the city to practise. Last month, we organised an exhibition, and many parents came. Now I want to become a professional photographer.</div>
+      <div class="test-label">❓ Pytania</div>
+      <div class="qa-grid">
+        <div class="qa-item"><div class="qa-q">What club did she join?</div><div class="qa-a">✓ Photography club</div></div>
+        <div class="qa-item"><div class="qa-q">When do they meet?</div><div class="qa-a">✓ Every Thursday</div></div>
+        <div class="qa-item"><div class="qa-q">What event did they organise?</div><div class="qa-a">✓ An exhibition</div></div>
+        <div class="qa-item"><div class="qa-q">What does she want to be?</div><div class="qa-a">✓ Professional photographer</div></div>
+      </div>
+      <div class="rating-section"><div class="rating-lbl">Ocena</div>
+        <div class="rating-btns">
+          <button class="rate-btn weak" onclick="setRating('r','B1','Weak')">✗ Weak</button>
+          <button class="rate-btn ok" onclick="setRating('r','B1','OK')">~ OK</button>
+          <button class="rate-btn strong" onclick="setRating('r','B1','Strong')">✓ Strong</button>
+        </div>
+        <div id="nudge-r-B1" class="nudge"><div class="nudge-text"></div><div class="nudge-btns"></div></div>
+        <div class="comment-wrap"><textarea class="comment-input" id="comm-r-B1" placeholder="Komentarz..." oninput="saveComment('r','B1',this.value)"></textarea></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="level-block" id="lb-r-B2">
+    <div class="level-hdr" onclick="toggleLevel('r-B2')">
+      <div class="lvl-left"><span class="lvl-badge">B2</span><div><div class="lvl-title">Tekst argumentacyjny — miasto vs. wieś</div><div class="lvl-sub">Zalety, wady, opinie, wnioski</div></div></div>
+      <div class="lvl-right"><span class="rating-pill none" id="pill-r-B2">— brak</span><span class="toggle-ico" id="ti-r-B2">▾</span></div>
+    </div>
+    <div class="level-body" id="body-r-B2">
+      <div class="test-label">📄 Tekst</div>
+      <div class="test-text">City life is exciting: restaurants, concerts, cultural events. But there are disadvantages: crowded streets, traffic jams, pollution. Some prefer countryside life, which is healthier but sometimes boring. The choice depends on personal preferences.</div>
+      <div class="test-label">❓ Pytania</div>
+      <div class="qa-grid">
+        <div class="qa-item"><div class="qa-q">2 advantages of city life?</div><div class="qa-a">✓ Restaurants, concerts/culture</div></div>
+        <div class="qa-item"><div class="qa-q">2 disadvantages?</div><div class="qa-a">✓ Crowds, pollution/traffic</div></div>
+        <div class="qa-item"><div class="qa-q">Advantage of countryside?</div><div class="qa-a">✓ Healthier, less stress</div></div>
+        <div class="qa-item"><div class="qa-q">Choice depends on?</div><div class="qa-a">✓ Personal preferences</div></div>
+      </div>
+      <div class="rating-section"><div class="rating-lbl">Ocena</div>
+        <div class="rating-btns">
+          <button class="rate-btn weak" onclick="setRating('r','B2','Weak')">✗ Weak</button>
+          <button class="rate-btn ok" onclick="setRating('r','B2','OK')">~ OK</button>
+          <button class="rate-btn strong" onclick="setRating('r','B2','Strong')">✓ Strong</button>
+        </div>
+        <div id="nudge-r-B2" class="nudge"><div class="nudge-text"></div><div class="nudge-btns"></div></div>
+        <div class="comment-wrap"><textarea class="comment-input" id="comm-r-B2" placeholder="Komentarz..." oninput="saveComment('r','B2',this.value)"></textarea></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="level-block" id="lb-r-C1">
+    <div class="level-hdr" onclick="toggleLevel('r-C1')">
+      <div class="lvl-left"><span class="lvl-badge">C1</span><div><div class="lvl-title">Tekst analityczny — media społecznościowe</div><div class="lvl-sub">Skutki, ryzyko, rola w przyszłości</div></div></div>
+      <div class="lvl-right"><span class="rating-pill none" id="pill-r-C1">— brak</span><span class="toggle-ico" id="ti-r-C1">▾</span></div>
+    </div>
+    <div class="level-body" id="body-r-C1">
+      <div class="test-label">📄 Tekst</div>
+      <div class="test-text">Social media has changed communication. It allows self-expression, but also causes anxiety and low self-esteem, especially among teenagers. It spreads misinformation quickly. Despite challenges, it will continue to play an important role.</div>
+      <div class="test-label">❓ Pytania</div>
+      <div class="qa-grid">
+        <div class="qa-item"><div class="qa-q">What opportunities does it offer?</div><div class="qa-a">✓ Self-expression, communication</div></div>
+        <div class="qa-item"><div class="qa-q">Negative effects?</div><div class="qa-a">✓ Anxiety, low self-esteem</div></div>
+        <div class="qa-item"><div class="qa-q">Major problem?</div><div class="qa-a">✓ Misinformation</div></div>
+        <div class="qa-item"><div class="qa-q">Future role?</div><div class="qa-a">✓ Will remain important</div></div>
+      </div>
+      <div class="rating-section"><div class="rating-lbl">Ocena</div>
+        <div class="rating-btns">
+          <button class="rate-btn weak" onclick="setRating('r','C1','Weak')">✗ Weak</button>
+          <button class="rate-btn ok" onclick="setRating('r','C1','OK')">~ OK</button>
+          <button class="rate-btn strong" onclick="setRating('r','C1','Strong')">✓ Strong</button>
+        </div>
+        <div id="nudge-r-C1" class="nudge"><div class="nudge-text"></div><div class="nudge-btns"></div></div>
+        <div class="comment-wrap"><textarea class="comment-input" id="comm-r-C1" placeholder="Komentarz..." oninput="saveComment('r','C1',this.value)"></textarea></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="level-block" id="lb-r-C2">
+    <div class="level-hdr" onclick="toggleLevel('r-C2')">
+      <div class="lvl-left"><span class="lvl-badge">C2</span><div><div class="lvl-title">Tekst publicystyczny — zmiany klimatu</div><div class="lvl-sub">Złożona argumentacja, polityka, wnioski</div></div></div>
+      <div class="lvl-right"><span class="rating-pill none" id="pill-r-C2">— brak</span><span class="toggle-ico" id="ti-r-C2">▾</span></div>
+    </div>
+    <div class="level-body" id="body-r-C2">
+      <div class="test-label">📄 Tekst</div>
+      <div class="test-text">Climate change is a global challenge. Rising temperatures cause floods, droughts, and melting ice. This affects crops, food prices, and health. Agreements like the Paris Accord aim to reduce emissions, but critics say this is not enough. Governments, businesses, and individuals must act decisively.</div>
+      <div class="test-label">❓ Pytania</div>
+      <div class="qa-grid">
+        <div class="qa-item"><div class="qa-q">Weather effects?</div><div class="qa-a">✓ Floods, droughts, melting ice</div></div>
+        <div class="qa-item"><div class="qa-q">Economy / health impact?</div><div class="qa-a">✓ Crops, food prices, diseases</div></div>
+        <div class="qa-item"><div class="qa-q">Aim of Paris Accord?</div><div class="qa-a">✓ Reduce emissions</div></div>
+        <div class="qa-item"><div class="qa-q">Who should act?</div><div class="qa-a">✓ Governments, businesses, individuals</div></div>
+      </div>
+      <div class="rating-section"><div class="rating-lbl">Ocena</div>
+        <div class="rating-btns">
+          <button class="rate-btn weak" onclick="setRating('r','C2','Weak')">✗ Weak</button>
+          <button class="rate-btn ok" onclick="setRating('r','C2','OK')">~ OK</button>
+          <button class="rate-btn strong" onclick="setRating('r','C2','Strong')">✓ Strong</button>
+        </div>
+        <div id="nudge-r-C2" class="nudge"><div class="nudge-text"></div><div class="nudge-btns"></div></div>
+        <div class="comment-wrap"><textarea class="comment-input" id="comm-r-C2" placeholder="Komentarz..." oninput="saveComment('r','C2',this.value)"></textarea></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="nav-btns">
+    <button class="btn btn-ghost" onclick="goTo(2)">← Listening</button>
+    <button class="btn btn-primary" onclick="goTo(4)">Writing →</button>
+  </div>
+</section>
+
+<!-- ═══ 3 — WRITING ═══ (with rubric) ═══ -->
+<section class="section" id="sec-4">
+  <div class="page-title">✍️ Writing</div>
+  <div class="page-sub">Pisanie <span class="dot"></span> <span class="time-chip">5 min</span> <span class="dot"></span> Ocena 4-kryteryjowa</div>
+  <div class="skill-intro">
+    <div class="skill-icon">✍️</div>
+    <div class="skill-info"><h3>Instrukcja</h3><p>Każdy poziom oceniasz po 4 kryteriach: Gramatyka / Słownictwo / Spójność / Styl. Ocena ogólna wylicza się automatycznie z kryteriów.</p></div>
+  </div>
+
+  <!-- Writing level macro -->
+  <!-- A1 -->
+  <div class="level-block" id="lb-w-A1">
+    <div class="level-hdr" onclick="toggleLevel('w-A1')">
+      <div class="lvl-left"><span class="lvl-badge">A1</span><div><div class="lvl-title">Trzy zdania o sobie</div><div class="lvl-sub">Samoopis, czas teraźniejszy</div></div></div>
+      <div class="lvl-right"><span class="rating-pill none" id="pill-w-A1">— brak</span><span class="toggle-ico" id="ti-w-A1">▾</span></div>
+    </div>
+    <div class="level-body open" id="body-w-A1">
+      <div class="writing-task"><div class="task-lbl">📝 Zadanie</div><div class="task-txt">Napisz 3 zdania o sobie. (Write 3 sentences about yourself.)</div></div>
+      <div class="test-label">✅ Model</div>
+      <div class="model-txt"><span>MODEL:</span> My name is Anna. I have one brother. I like football.</div>
+      <div class="test-label">📊 Rubryka oceny</div>
+      <div class="rubric-wrap" id="rubric-w-A1">
+        <div class="rubric-row"><div class="rubric-criterion">Gramatyka<small>Poprawność zdań</small></div><div class="rubric-btns"><button class="rub-btn weak" onclick="setRubric('w','A1','grammar','Weak')">✗</button><button class="rub-btn ok" onclick="setRubric('w','A1','grammar','OK')">~</button><button class="rub-btn strong" onclick="setRubric('w','A1','grammar','Strong')">✓</button></div></div>
+        <div class="rubric-row"><div class="rubric-criterion">Słownictwo<small>Zakres leksyczny</small></div><div class="rubric-btns"><button class="rub-btn weak" onclick="setRubric('w','A1','vocab','Weak')">✗</button><button class="rub-btn ok" onclick="setRubric('w','A1','vocab','OK')">~</button><button class="rub-btn strong" onclick="setRubric('w','A1','vocab','Strong')">✓</button></div></div>
+        <div class="rubric-row"><div class="rubric-criterion">Spójność<small>Logika i flow</small></div><div class="rubric-btns"><button class="rub-btn weak" onclick="setRubric('w','A1','coherence','Weak')">✗</button><button class="rub-btn ok" onclick="setRubric('w','A1','coherence','OK')">~</button><button class="rub-btn strong" onclick="setRubric('w','A1','coherence','Strong')">✓</button></div></div>
+        <div class="rubric-row"><div class="rubric-criterion">Styl<small>Odpowiedniość tonu</small></div><div class="rubric-btns"><button class="rub-btn weak" onclick="setRubric('w','A1','style','Weak')">✗</button><button class="rub-btn ok" onclick="setRubric('w','A1','style','OK')">~</button><button class="rub-btn strong" onclick="setRubric('w','A1','style','Strong')">✓</button></div></div>
+      </div>
+      <div class="rating-section"><div class="rating-lbl">Ocena ogólna (auto z kryteriów lub ręczna)</div>
+        <div class="rating-btns">
+          <button class="rate-btn weak" onclick="setRating('w','A1','Weak')">✗ Weak</button>
+          <button class="rate-btn ok" onclick="setRating('w','A1','OK')">~ OK</button>
+          <button class="rate-btn strong" onclick="setRating('w','A1','Strong')">✓ Strong</button>
+        </div>
+        <div id="nudge-w-A1" class="nudge"><div class="nudge-text"></div><div class="nudge-btns"></div></div>
+        <div class="comment-wrap"><textarea class="comment-input" id="comm-w-A1" placeholder="Komentarz (np. błędy ortograficzne, szyk zdania)..." oninput="saveComment('w','A1',this.value)"></textarea></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- A2 -->
+  <div class="level-block" id="lb-w-A2">
+    <div class="level-hdr" onclick="toggleLevel('w-A2')">
+      <div class="lvl-left"><span class="lvl-badge">A2</span><div><div class="lvl-title">Krótka wiadomość o wakacjach</div><div class="lvl-sub">SMS lub e-mail, mix czasów</div></div></div>
+      <div class="lvl-right"><span class="rating-pill none" id="pill-w-A2">— brak</span><span class="toggle-ico" id="ti-w-A2">▾</span></div>
+    </div>
+    <div class="level-body" id="body-w-A2">
+      <div class="writing-task"><div class="task-lbl">📝 Zadanie</div><div class="task-txt">Napisz krótką wiadomość o wakacjach (3–5 zdań). Powiedz gdzie jesteś, jaka pogoda i co zrobisz jutro.</div></div>
+      <div class="test-label">✅ Model</div>
+      <div class="model-txt"><span>MODEL:</span> I am in Spain. The weather is sunny. Tomorrow we will go to a museum.</div>
+      <div class="test-label">📊 Rubryka</div>
+      <div class="rubric-wrap" id="rubric-w-A2">
+        <div class="rubric-row"><div class="rubric-criterion">Gramatyka<small>Present/Past/Future</small></div><div class="rubric-btns"><button class="rub-btn weak" onclick="setRubric('w','A2','grammar','Weak')">✗</button><button class="rub-btn ok" onclick="setRubric('w','A2','grammar','OK')">~</button><button class="rub-btn strong" onclick="setRubric('w','A2','grammar','Strong')">✓</button></div></div>
+        <div class="rubric-row"><div class="rubric-criterion">Słownictwo<small>Podróże, opis</small></div><div class="rubric-btns"><button class="rub-btn weak" onclick="setRubric('w','A2','vocab','Weak')">✗</button><button class="rub-btn ok" onclick="setRubric('w','A2','vocab','OK')">~</button><button class="rub-btn strong" onclick="setRubric('w','A2','vocab','Strong')">✓</button></div></div>
+        <div class="rubric-row"><div class="rubric-criterion">Spójność<small>Logiczny ciąg zdań</small></div><div class="rubric-btns"><button class="rub-btn weak" onclick="setRubric('w','A2','coherence','Weak')">✗</button><button class="rub-btn ok" onclick="setRubric('w','A2','coherence','OK')">~</button><button class="rub-btn strong" onclick="setRubric('w','A2','coherence','Strong')">✓</button></div></div>
+        <div class="rubric-row"><div class="rubric-criterion">Styl<small>Ton wiadomości</small></div><div class="rubric-btns"><button class="rub-btn weak" onclick="setRubric('w','A2','style','Weak')">✗</button><button class="rub-btn ok" onclick="setRubric('w','A2','style','OK')">~</button><button class="rub-btn strong" onclick="setRubric('w','A2','style','Strong')">✓</button></div></div>
+      </div>
+      <div class="rating-section"><div class="rating-lbl">Ocena ogólna</div>
+        <div class="rating-btns"><button class="rate-btn weak" onclick="setRating('w','A2','Weak')">✗ Weak</button><button class="rate-btn ok" onclick="setRating('w','A2','OK')">~ OK</button><button class="rate-btn strong" onclick="setRating('w','A2','Strong')">✓ Strong</button></div>
+        <div id="nudge-w-A2" class="nudge"><div class="nudge-text"></div><div class="nudge-btns"></div></div>
+        <div class="comment-wrap"><textarea class="comment-input" id="comm-w-A2" placeholder="Komentarz..." oninput="saveComment('w','A2',this.value)"></textarea></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- B1 -->
+  <div class="level-block" id="lb-w-B1">
+    <div class="level-hdr" onclick="toggleLevel('w-B1')">
+      <div class="lvl-left"><span class="lvl-badge">B1</span><div><div class="lvl-title">E-mail z zaproszeniem na urodziny</div><div class="lvl-sub">Forma, ton nieformalny, szczegóły</div></div></div>
+      <div class="lvl-right"><span class="rating-pill none" id="pill-w-B1">— brak</span><span class="toggle-ico" id="ti-w-B1">▾</span></div>
+    </div>
+    <div class="level-body" id="body-w-B1">
+      <div class="writing-task"><div class="task-lbl">📝 Zadanie</div><div class="task-txt">Napisz e-mail do przyjaciela z zaproszeniem na urodziny. Podaj datę, godzinę i co będzie na imprezie.</div></div>
+      <div class="test-label">✅ Model</div>
+      <div class="model-txt"><span>MODEL:</span> Hi Kate, I'm writing to invite you to my birthday on Saturday at 5 p.m. There will be music and games. Hope you can come!</div>
+      <div class="test-label">📊 Rubryka</div>
+      <div class="rubric-wrap" id="rubric-w-B1">
+        <div class="rubric-row"><div class="rubric-criterion">Gramatyka<small>Czasy, modalność</small></div><div class="rubric-btns"><button class="rub-btn weak" onclick="setRubric('w','B1','grammar','Weak')">✗</button><button class="rub-btn ok" onclick="setRubric('w','B1','grammar','OK')">~</button><button class="rub-btn strong" onclick="setRubric('w','B1','grammar','Strong')">✓</button></div></div>
+        <div class="rubric-row"><div class="rubric-criterion">Słownictwo<small>Zaproszenia, social</small></div><div class="rubric-btns"><button class="rub-btn weak" onclick="setRubric('w','B1','vocab','Weak')">✗</button><button class="rub-btn ok" onclick="setRubric('w','B1','vocab','OK')">~</button><button class="rub-btn strong" onclick="setRubric('w','B1','vocab','Strong')">✓</button></div></div>
+        <div class="rubric-row"><div class="rubric-criterion">Spójność<small>Struktura e-maila</small></div><div class="rubric-btns"><button class="rub-btn weak" onclick="setRubric('w','B1','coherence','Weak')">✗</button><button class="rub-btn ok" onclick="setRubric('w','B1','coherence','OK')">~</button><button class="rub-btn strong" onclick="setRubric('w','B1','coherence','Strong')">✓</button></div></div>
+        <div class="rubric-row"><div class="rubric-criterion">Styl<small>Ton nieformalny</small></div><div class="rubric-btns"><button class="rub-btn weak" onclick="setRubric('w','B1','style','Weak')">✗</button><button class="rub-btn ok" onclick="setRubric('w','B1','style','OK')">~</button><button class="rub-btn strong" onclick="setRubric('w','B1','style','Strong')">✓</button></div></div>
+      </div>
+      <div class="rating-section"><div class="rating-lbl">Ocena ogólna</div>
+        <div class="rating-btns"><button class="rate-btn weak" onclick="setRating('w','B1','Weak')">✗ Weak</button><button class="rate-btn ok" onclick="setRating('w','B1','OK')">~ OK</button><button class="rate-btn strong" onclick="setRating('w','B1','Strong')">✓ Strong</button></div>
+        <div id="nudge-w-B1" class="nudge"><div class="nudge-text"></div><div class="nudge-btns"></div></div>
+        <div class="comment-wrap"><textarea class="comment-input" id="comm-w-B1" placeholder="Komentarz..." oninput="saveComment('w','B1',this.value)"></textarea></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- B2 -->
+  <div class="level-block" id="lb-w-B2">
+    <div class="level-hdr" onclick="toggleLevel('w-B2')">
+      <div class="lvl-left"><span class="lvl-badge">B2</span><div><div class="lvl-title">Krótka opinia o filmie</div><div class="lvl-sub">Recenzja, plusy i minusy, argumentacja</div></div></div>
+      <div class="lvl-right"><span class="rating-pill none" id="pill-w-B2">— brak</span><span class="toggle-ico" id="ti-w-B2">▾</span></div>
+    </div>
+    <div class="level-body" id="body-w-B2">
+      <div class="writing-task"><div class="task-lbl">📝 Zadanie</div><div class="task-txt">Napisz krótką opinię o filmie, który ostatnio oglądałeś/łaś. Wspomnij plusy i minusy.</div></div>
+      <div class="test-label">✅ Model</div>
+      <div class="model-txt"><span>MODEL:</span> I watched Inception. It was exciting and original. The special effects were amazing, but some parts were difficult to understand.</div>
+      <div class="test-label">📊 Rubryka</div>
+      <div class="rubric-wrap" id="rubric-w-B2">
+        <div class="rubric-row"><div class="rubric-criterion">Gramatyka<small>Zdania złożone, czasy</small></div><div class="rubric-btns"><button class="rub-btn weak" onclick="setRubric('w','B2','grammar','Weak')">✗</button><button class="rub-btn ok" onclick="setRubric('w','B2','grammar','OK')">~</button><button class="rub-btn strong" onclick="setRubric('w','B2','grammar','Strong')">✓</button></div></div>
+        <div class="rubric-row"><div class="rubric-criterion">Słownictwo<small>Oceniające, precyzyjne</small></div><div class="rubric-btns"><button class="rub-btn weak" onclick="setRubric('w','B2','vocab','Weak')">✗</button><button class="rub-btn ok" onclick="setRubric('w','B2','vocab','OK')">~</button><button class="rub-btn strong" onclick="setRubric('w','B2','vocab','Strong')">✓</button></div></div>
+        <div class="rubric-row"><div class="rubric-criterion">Spójność<small>However, although, but</small></div><div class="rubric-btns"><button class="rub-btn weak" onclick="setRubric('w','B2','coherence','Weak')">✗</button><button class="rub-btn ok" onclick="setRubric('w','B2','coherence','OK')">~</button><button class="rub-btn strong" onclick="setRubric('w','B2','coherence','Strong')">✓</button></div></div>
+        <div class="rubric-row"><div class="rubric-criterion">Styl<small>Ton recenzji</small></div><div class="rubric-btns"><button class="rub-btn weak" onclick="setRubric('w','B2','style','Weak')">✗</button><button class="rub-btn ok" onclick="setRubric('w','B2','style','OK')">~</button><button class="rub-btn strong" onclick="setRubric('w','B2','style','Strong')">✓</button></div></div>
+      </div>
+      <div class="rating-section"><div class="rating-lbl">Ocena ogólna</div>
+        <div class="rating-btns"><button class="rate-btn weak" onclick="setRating('w','B2','Weak')">✗ Weak</button><button class="rate-btn ok" onclick="setRating('w','B2','OK')">~ OK</button><button class="rate-btn strong" onclick="setRating('w','B2','Strong')">✓ Strong</button></div>
+        <div id="nudge-w-B2" class="nudge"><div class="nudge-text"></div><div class="nudge-btns"></div></div>
+        <div class="comment-wrap"><textarea class="comment-input" id="comm-w-B2" placeholder="Komentarz..." oninput="saveComment('w','B2',this.value)"></textarea></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- C1 -->
+  <div class="level-block" id="lb-w-C1">
+    <div class="level-hdr" onclick="toggleLevel('w-C1')">
+      <div class="lvl-left"><span class="lvl-badge">C1</span><div><div class="lvl-title">Krótka rozprawka — social media</div><div class="lvl-sub">Argumenty za i przeciw, teza, wniosek</div></div></div>
+      <div class="lvl-right"><span class="rating-pill none" id="pill-w-C1">— brak</span><span class="toggle-ico" id="ti-w-C1">▾</span></div>
+    </div>
+    <div class="level-body" id="body-w-C1">
+      <div class="writing-task"><div class="task-lbl">📝 Zadanie</div><div class="task-txt">"Social media — good or bad for teenagers?" Napisz krótką rozprawkę (8–10 zdań): wstęp, argumenty za i przeciw, wniosek.</div></div>
+      <div class="test-label">✅ Model</div>
+      <div class="model-txt"><span>MODEL:</span> Social media helps teenagers communicate and find information. However, it causes stress and low self-esteem. In conclusion, the key is balance and digital literacy.</div>
+      <div class="test-label">📊 Rubryka</div>
+      <div class="rubric-wrap" id="rubric-w-C1">
+        <div class="rubric-row"><div class="rubric-criterion">Gramatyka<small>Złożona, precyzyjna</small></div><div class="rubric-btns"><button class="rub-btn weak" onclick="setRubric('w','C1','grammar','Weak')">✗</button><button class="rub-btn ok" onclick="setRubric('w','C1','grammar','OK')">~</button><button class="rub-btn strong" onclick="setRubric('w','C1','grammar','Strong')">✓</button></div></div>
+        <div class="rubric-row"><div class="rubric-criterion">Słownictwo<small>Akademickie, zróżnicowane</small></div><div class="rubric-btns"><button class="rub-btn weak" onclick="setRubric('w','C1','vocab','Weak')">✗</button><button class="rub-btn ok" onclick="setRubric('w','C1','vocab','OK')">~</button><button class="rub-btn strong" onclick="setRubric('w','C1','vocab','Strong')">✓</button></div></div>
+        <div class="rubric-row"><div class="rubric-criterion">Spójność<small>Struktura wstęp/teza/wniosek</small></div><div class="rubric-btns"><button class="rub-btn weak" onclick="setRubric('w','C1','coherence','Weak')">✗</button><button class="rub-btn ok" onclick="setRubric('w','C1','coherence','OK')">~</button><button class="rub-btn strong" onclick="setRubric('w','C1','coherence','Strong')">✓</button></div></div>
+        <div class="rubric-row"><div class="rubric-criterion">Styl<small>Akademicki, formalny</small></div><div class="rubric-btns"><button class="rub-btn weak" onclick="setRubric('w','C1','style','Weak')">✗</button><button class="rub-btn ok" onclick="setRubric('w','C1','style','OK')">~</button><button class="rub-btn strong" onclick="setRubric('w','C1','style','Strong')">✓</button></div></div>
+      </div>
+      <div class="rating-section"><div class="rating-lbl">Ocena ogólna</div>
+        <div class="rating-btns"><button class="rate-btn weak" onclick="setRating('w','C1','Weak')">✗ Weak</button><button class="rate-btn ok" onclick="setRating('w','C1','OK')">~ OK</button><button class="rate-btn strong" onclick="setRating('w','C1','Strong')">✓ Strong</button></div>
+        <div id="nudge-w-C1" class="nudge"><div class="nudge-text"></div><div class="nudge-btns"></div></div>
+        <div class="comment-wrap"><textarea class="comment-input" id="comm-w-C1" placeholder="Komentarz..." oninput="saveComment('w','C1',this.value)"></textarea></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- C2 -->
+  <div class="level-block" id="lb-w-C2">
+    <div class="level-hdr" onclick="toggleLevel('w-C2')">
+      <div class="lvl-left"><span class="lvl-badge">C2</span><div><div class="lvl-title">Recenzja książki — styl literacki</div><div class="lvl-sub">Ocena krytyczna, bogaty język</div></div></div>
+      <div class="lvl-right"><span class="rating-pill none" id="pill-w-C2">— brak</span><span class="toggle-ico" id="ti-w-C2">▾</span></div>
+    </div>
+    <div class="level-body" id="body-w-C2">
+      <div class="writing-task"><div class="task-lbl">📝 Zadanie</div><div class="task-txt">Napisz krótką recenzję książki, którą ostatnio czytałeś/łaś. Użyj precyzyjnego języka krytycznego.</div></div>
+      <div class="test-label">✅ Model</div>
+      <div class="model-txt"><span>MODEL:</span> I read Sapiens. It was fascinating and thought-provoking, though a bit repetitive. I recommend it to anyone interested in history and the human condition.</div>
+      <div class="test-label">📊 Rubryka</div>
+      <div class="rubric-wrap" id="rubric-w-C2">
+        <div class="rubric-row"><div class="rubric-criterion">Gramatyka<small>Bezbłędna, złożona</small></div><div class="rubric-btns"><button class="rub-btn weak" onclick="setRubric('w','C2','grammar','Weak')">✗</button><button class="rub-btn ok" onclick="setRubric('w','C2','grammar','OK')">~</button><button class="rub-btn strong" onclick="setRubric('w','C2','grammar','Strong')">✓</button></div></div>
+        <div class="rubric-row"><div class="rubric-criterion">Słownictwo<small>Bogate, literackie</small></div><div class="rubric-btns"><button class="rub-btn weak" onclick="setRubric('w','C2','vocab','Weak')">✗</button><button class="rub-btn ok" onclick="setRubric('w','C2','vocab','OK')">~</button><button class="rub-btn strong" onclick="setRubric('w','C2','vocab','Strong')">✓</button></div></div>
+        <div class="rubric-row"><div class="rubric-criterion">Spójność<small>Elegancka narracja</small></div><div class="rubric-btns"><button class="rub-btn weak" onclick="setRubric('w','C2','coherence','Weak')">✗</button><button class="rub-btn ok" onclick="setRubric('w','C2','coherence','OK')">~</button><button class="rub-btn strong" onclick="setRubric('w','C2','coherence','Strong')">✓</button></div></div>
+        <div class="rubric-row"><div class="rubric-criterion">Styl<small>Krytyczny, wyrafinowany</small></div><div class="rubric-btns"><button class="rub-btn weak" onclick="setRubric('w','C2','style','Weak')">✗</button><button class="rub-btn ok" onclick="setRubric('w','C2','style','OK')">~</button><button class="rub-btn strong" onclick="setRubric('w','C2','style','Strong')">✓</button></div></div>
+      </div>
+      <div class="rating-section"><div class="rating-lbl">Ocena ogólna</div>
+        <div class="rating-btns"><button class="rate-btn weak" onclick="setRating('w','C2','Weak')">✗ Weak</button><button class="rate-btn ok" onclick="setRating('w','C2','OK')">~ OK</button><button class="rate-btn strong" onclick="setRating('w','C2','Strong')">✓ Strong</button></div>
+        <div id="nudge-w-C2" class="nudge"><div class="nudge-text"></div><div class="nudge-btns"></div></div>
+        <div class="comment-wrap"><textarea class="comment-input" id="comm-w-C2" placeholder="Komentarz..." oninput="saveComment('w','C2',this.value)"></textarea></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="nav-btns">
+    <button class="btn btn-ghost" onclick="goTo(3)">← Reading</button>
+    <button class="btn btn-primary" onclick="goTo(5)">Speaking →</button>
+  </div>
+</section>
+
+<!-- ═══ 4 — SPEAKING ═══ -->
+<section class="section" id="sec-5">
+  <div class="page-title">🗣 Speaking</div>
+  <div class="page-sub">Mówienie <span class="dot"></span> Czas per blok: 5 min · zacznij od A1/A2 · idź wyżej gdy Strong</div>
+  <div class="skill-intro">
+    <div class="skill-icon">🗣</div>
+    <div class="skill-info">
+      <h3>Instrukcja</h3>
+      <p>Zacznij od A1/A2. Każdy blok ma <strong>5 pytań głównych</strong> + <strong>8 zapasowych</strong> (gdy uczeń odpowiada zbyt szybko lub blokuje się). Przy każdym pytaniu kliknij <strong>💡</strong> — pojawią się podpowiedzi odblokowujące dla zablokowanego ucznia.</p>
+    </div>
+  </div>
+
+  <!-- ─── A1/A2 BLOCK ─── -->
+  <div class="level-block" id="lb-s-A1">
+    <div class="level-hdr" onclick="toggleLevel('s-A1')">
+      <div class="lvl-left">
+        <span class="lvl-badge">A1/A2</span>
+        <div><div class="lvl-title">Pytania osobiste i codzienne</div><div class="lvl-sub">Kim jesteś, szkoła/praca, czas wolny</div></div>
+      </div>
+      <div class="lvl-right" style="gap:12px;">
+        <div class="spk-timer-wrap" id="stw-A1">
+          <div class="spk-timer-display" id="spk-timer-A1">5:00</div>
+          <button class="spk-timer-btn" id="spk-tbtn-A1" onclick="event.stopPropagation();toggleSpeakingTimer('A1',300)">▶</button>
+        </div>
+        <span class="rating-pill none" id="pill-s-A1">— brak</span>
+        <span class="toggle-ico" id="ti-s-A1">▾</span>
+      </div>
+    </div>
+    <div class="level-body open" id="body-s-A1">
+
+      <div class="test-label" style="margin-top:12px;">🗣 Pytania główne</div>
+      <div class="spk-qlist" id="main-s-A1">
+        <div class="spk-q-item">
+          <div class="spk-q-num">1</div>
+          <div class="spk-q-body">
+            <div class="spk-q-text">Can you tell me something about yourself?</div>
+            <button class="spk-hint-btn" onclick="toggleHint('h-A1-1')">💡 Zablokowany?</button>
+            <div class="spk-hint" id="h-A1-1">Spróbuj: <em>"How old are you?"</em> · <em>"Where do you live?"</em> · <em>"Do you have a pet?"</em> · <em>"What's your name?"</em></div>
+          </div>
+        </div>
+        <div class="spk-q-item">
+          <div class="spk-q-num">2</div>
+          <div class="spk-q-body">
+            <div class="spk-q-text">Do you have any brothers or sisters?</div>
+            <button class="spk-hint-btn" onclick="toggleHint('h-A1-2')">💡 Zablokowany?</button>
+            <div class="spk-hint" id="h-A1-2">Spróbuj: <em>"Is it a brother or a sister?"</em> · <em>"How old are they?"</em> · <em>"Do you play together?"</em></div>
+          </div>
+        </div>
+        <div class="spk-q-item">
+          <div class="spk-q-num">3</div>
+          <div class="spk-q-body">
+            <div class="spk-q-text">Where did you go to school? / What school do you go to?</div>
+            <button class="spk-hint-btn" onclick="toggleHint('h-A1-3')">💡 Zablokowany?</button>
+            <div class="spk-hint" id="h-A1-3">Spróbuj: <em>"Is it a big school or small?"</em> · <em>"Do you like your school?"</em> · <em>"What's your favourite subject?"</em></div>
+          </div>
+        </div>
+        <div class="spk-q-item">
+          <div class="spk-q-num">4</div>
+          <div class="spk-q-body">
+            <div class="spk-q-text">What do you do for a living? / What is your job?</div>
+            <button class="spk-hint-btn" onclick="toggleHint('h-A1-4')">💡 Zablokowany?</button>
+            <div class="spk-hint" id="h-A1-4">Spróbuj: <em>"Are you a student?"</em> · <em>"Do you work?"</em> · <em>"Do you like your job / school?"</em></div>
+          </div>
+        </div>
+        <div class="spk-q-item">
+          <div class="spk-q-num">5</div>
+          <div class="spk-q-body">
+            <div class="spk-q-text">What do you do after work / school?</div>
+            <button class="spk-hint-btn" onclick="toggleHint('h-A1-5')">💡 Zablokowany?</button>
+            <div class="spk-hint" id="h-A1-5">Spróbuj: <em>"Do you watch TV?"</em> · <em>"Do you play games or sport?"</em> · <em>"Do you meet friends?"</em></div>
+          </div>
+        </div>
+      </div>
+
+      <button class="spk-more-btn" id="more-btn-A1" onclick="showBackup('A1')">+ Pokaż 8 pytań zapasowych</button>
+      <div class="spk-qlist spk-backup" id="backup-s-A1">
+        <div class="spk-backup-label">📦 Pytania zapasowe A1/A2</div>
+        <div class="spk-q-item backup"><div class="spk-q-num">+1</div><div class="spk-q-body"><div class="spk-q-text">What's your favourite colour / food / animal?</div><button class="spk-hint-btn" onclick="toggleHint('h-A1-b1')">💡</button><div class="spk-hint" id="h-A1-b1">Prosto: <em>"Is it red, blue, green?"</em> · Pokaż kartę z kolorami jeśli potrzeba.</div></div></div>
+        <div class="spk-q-item backup"><div class="spk-q-num">+2</div><div class="spk-q-body"><div class="spk-q-text">Do you have a pet? Tell me about it.</div><button class="spk-hint-btn" onclick="toggleHint('h-A1-b2')">💡</button><div class="spk-hint" id="h-A1-b2"><em>"Is it a dog or cat?"</em> · <em>"What's its name?"</em> · <em>"Is it big or small?"</em></div></div></div>
+        <div class="spk-q-item backup"><div class="spk-q-num">+3</div><div class="spk-q-body"><div class="spk-q-text">Can you describe your room or house?</div><button class="spk-hint-btn" onclick="toggleHint('h-A1-b3')">💡</button><div class="spk-hint" id="h-A1-b3"><em>"Is it big or small?"</em> · <em>"What colour are the walls?"</em> · <em>"What's in your room?"</em></div></div></div>
+        <div class="spk-q-item backup"><div class="spk-q-num">+4</div><div class="spk-q-body"><div class="spk-q-text">What do you do on Sundays?</div><button class="spk-hint-btn" onclick="toggleHint('h-A1-b4')">💡</button><div class="spk-hint" id="h-A1-b4"><em>"Do you stay at home?"</em> · <em>"Do you go out?"</em> · <em>"Do you eat with family?"</em></div></div></div>
+        <div class="spk-q-item backup"><div class="spk-q-num">+5</div><div class="spk-q-body"><div class="spk-q-text">Do you like music? What kind?</div><button class="spk-hint-btn" onclick="toggleHint('h-A1-b5')">💡</button><div class="spk-hint" id="h-A1-b5"><em>"Pop, rock, or something else?"</em> · <em>"Do you listen on your phone?"</em> · <em>"Who is your favourite singer?"</em></div></div></div>
+        <div class="spk-q-item backup"><div class="spk-q-num">+6</div><div class="spk-q-body"><div class="spk-q-text">What sports do you like?</div><button class="spk-hint-btn" onclick="toggleHint('h-A1-b6')">💡</button><div class="spk-hint" id="h-A1-b6"><em>"Do you play or watch?"</em> · <em>"Is it a team sport?"</em> · <em>"Where do you play?"</em></div></div></div>
+        <div class="spk-q-item backup"><div class="spk-q-num">+7</div><div class="spk-q-body"><div class="spk-q-text">What is your favourite season? Why?</div><button class="spk-hint-btn" onclick="toggleHint('h-A1-b7')">💡</button><div class="spk-hint" id="h-A1-b7"><em>"Spring, summer, autumn, winter?"</em> · <em>"Hot or cold?"</em> · <em>"What do you do in that season?"</em></div></div></div>
+        <div class="spk-q-item backup"><div class="spk-q-num">+8</div><div class="spk-q-body"><div class="spk-q-text">Who is your best friend? Tell me about them.</div><button class="spk-hint-btn" onclick="toggleHint('h-A1-b8')">💡</button><div class="spk-hint" id="h-A1-b8"><em>"Is it a boy or girl?"</em> · <em>"How old are they?"</em> · <em>"What do you do together?"</em></div></div></div>
+      </div>
+
+      <div class="test-label">📊 Klucz oceny</div>
+      <div class="qa-grid">
+        <div class="qa-item"><div class="qa-q">A1</div><div class="qa-a">My name is Ola. I am ten. I have one brother. After school I play football.</div></div>
+        <div class="qa-item"><div class="qa-q">A2</div><div class="qa-a">At weekends I meet friends. My favourite place is the park near my house. I like music and football.</div></div>
+      </div>
+      <div class="descriptor" style="margin-top:12px;"><strong>A1:</strong> Krótkie zdania, potrzebuje wsparcia, mówi wolno, odpowiedzi jednowyrazowe. <strong>A2:</strong> Opisuje znane miejsca i ludzi, zadaje proste pytania, radzi sobie bez ciągłego wsparcia.</div>
+
+      <div class="rating-section"><div class="rating-lbl">Ocena bloku A1/A2</div>
+        <div class="rating-btns">
+          <button class="rate-btn weak" onclick="setRating('s','A1','Weak')">✗ Weak</button>
+          <button class="rate-btn ok" onclick="setRating('s','A1','OK')">~ OK</button>
+          <button class="rate-btn strong" onclick="setRating('s','A1','Strong')">✓ Strong</button>
+        </div>
+        <div id="nudge-s-A1" class="nudge"><div class="nudge-text"></div><div class="nudge-btns"></div></div>
+        <div class="comment-wrap"><textarea class="comment-input" id="comm-s-A1" placeholder="Komentarz (tempo, płynność, zasób słownictwa, pewność siebie)..." oninput="saveComment('s','A1',this.value)"></textarea></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── B1/B2 BLOCK ─── -->
+  <div class="level-block" id="lb-s-B1">
+    <div class="level-hdr" onclick="toggleLevel('s-B1')">
+      <div class="lvl-left">
+        <span class="lvl-badge">B1/B2</span>
+        <div><div class="lvl-title">Opinie, marzenia, wartości</div><div class="lvl-sub">Podróże, dom marzeń, ważne rzeczy w życiu</div></div>
+      </div>
+      <div class="lvl-right" style="gap:12px;">
+        <div class="spk-timer-wrap" id="stw-B1">
+          <div class="spk-timer-display" id="spk-timer-B1">5:00</div>
+          <button class="spk-timer-btn" id="spk-tbtn-B1" onclick="event.stopPropagation();toggleSpeakingTimer('B1',300)">▶</button>
+        </div>
+        <span class="rating-pill none" id="pill-s-B1">— brak</span>
+        <span class="toggle-ico" id="ti-s-B1">▾</span>
+      </div>
+    </div>
+    <div class="level-body" id="body-s-B1">
+
+      <div class="test-label" style="margin-top:12px;">🗣 Pytania główne</div>
+      <div class="spk-qlist" id="main-s-B1">
+        <div class="spk-q-item">
+          <div class="spk-q-num">1</div>
+          <div class="spk-q-body">
+            <div class="spk-q-text">Do you like to travel? Where have you been so far?</div>
+            <button class="spk-hint-btn" onclick="toggleHint('h-B1-1')">💡 Zablokowany?</button>
+            <div class="spk-hint" id="h-B1-1">Spróbuj: <em>"Have you been abroad?"</em> · <em>"Mountains or sea?"</em> · <em>"Which country would you like to visit?"</em></div>
+          </div>
+        </div>
+        <div class="spk-q-item">
+          <div class="spk-q-num">2</div>
+          <div class="spk-q-body">
+            <div class="spk-q-text">What is the place you have always dreamed of going to?</div>
+            <button class="spk-hint-btn" onclick="toggleHint('h-B1-2')">💡 Zablokowany?</button>
+            <div class="spk-hint" id="h-B1-2">Spróbuj: <em>"Hot or cold country?"</em> · <em>"What would you do there?"</em> · <em>"Who would you go with?"</em></div>
+          </div>
+        </div>
+        <div class="spk-q-item">
+          <div class="spk-q-num">3</div>
+          <div class="spk-q-body">
+            <div class="spk-q-text">Tell me about a movie or series you have recently watched.</div>
+            <button class="spk-hint-btn" onclick="toggleHint('h-B1-3')">💡 Zablokowany?</button>
+            <div class="spk-hint" id="h-B1-3">Spróbuj: <em>"What kind of movies do you like?"</em> · <em>"Netflix or cinema?"</em> · <em>"Did you like it?"</em></div>
+          </div>
+        </div>
+        <div class="spk-q-item">
+          <div class="spk-q-num">4</div>
+          <div class="spk-q-body">
+            <div class="spk-q-text">Tell me about your dream house — what would it look like?</div>
+            <button class="spk-hint-btn" onclick="toggleHint('h-B1-4')">💡 Zablokowany?</button>
+            <div class="spk-hint" id="h-B1-4">Spróbuj: <em>"Big or small?"</em> · <em>"City or countryside?"</em> · <em>"What rooms would it have?"</em> · <em>"Garden or no garden?"</em></div>
+          </div>
+        </div>
+        <div class="spk-q-item">
+          <div class="spk-q-num">5</div>
+          <div class="spk-q-body">
+            <div class="spk-q-text">What do you consider to be important in life?</div>
+            <button class="spk-hint-btn" onclick="toggleHint('h-B1-5')">💡 Zablokowany?</button>
+            <div class="spk-hint" id="h-B1-5">Spróbuj: <em>"Is family important to you?"</em> · <em>"What about health or money?"</em> · <em>"What makes you happy?"</em></div>
+          </div>
+        </div>
+      </div>
+
+      <button class="spk-more-btn" id="more-btn-B1" onclick="showBackup('B1')">+ Pokaż 8 pytań zapasowych</button>
+      <div class="spk-qlist spk-backup" id="backup-s-B1">
+        <div class="spk-backup-label">📦 Pytania zapasowe B1/B2</div>
+        <div class="spk-q-item backup"><div class="spk-q-num">+1</div><div class="spk-q-body"><div class="spk-q-text">What do you usually do at weekends?</div><button class="spk-hint-btn" onclick="toggleHint('h-B1-b1')">💡</button><div class="spk-hint" id="h-B1-b1"><em>"Do you go out or stay in?"</em> · <em>"Do you spend time with family or friends?"</em></div></div></div>
+        <div class="spk-q-item backup"><div class="spk-q-num">+2</div><div class="spk-q-body"><div class="spk-q-text">Tell me about your best friend — what are they like?</div><button class="spk-hint-btn" onclick="toggleHint('h-B1-b2')">💡</button><div class="spk-hint" id="h-B1-b2"><em>"How long have you been friends?"</em> · <em>"What do you do together?"</em></div></div></div>
+        <div class="spk-q-item backup"><div class="spk-q-num">+3</div><div class="spk-q-body"><div class="spk-q-text">What would your perfect day look like?</div><button class="spk-hint-btn" onclick="toggleHint('h-B1-b3')">💡</button><div class="spk-hint" id="h-B1-b3"><em>"Morning, afternoon, evening — describe each."</em> · <em>"Alone or with someone?"</em></div></div></div>
+        <div class="spk-q-item backup"><div class="spk-q-num">+4</div><div class="spk-q-body"><div class="spk-q-text">Do you prefer city or countryside life? Why?</div><button class="spk-hint-btn" onclick="toggleHint('h-B1-b4')">💡</button><div class="spk-hint" id="h-B1-b4"><em>"Think about noise, nature, transport, people."</em> · <em>"Where do you live now — do you like it?"</em></div></div></div>
+        <div class="spk-q-item backup"><div class="spk-q-num">+5</div><div class="spk-q-body"><div class="spk-q-text">Tell me about a book you've read or a podcast you've listened to.</div><button class="spk-hint-btn" onclick="toggleHint('h-B1-b5')">💡</button><div class="spk-hint" id="h-B1-b5"><em>"What was it about?"</em> · <em>"Did you enjoy it?"</em> · <em>"Would you recommend it?"</em></div></div></div>
+        <div class="spk-q-item backup"><div class="spk-q-num">+6</div><div class="spk-q-body"><div class="spk-q-text">What would you change about your town or city?</div><button class="spk-hint-btn" onclick="toggleHint('h-B1-b6')">💡</button><div class="spk-hint" id="h-B1-b6"><em>"Transport? Parks? Restaurants? Safety?"</em> · <em>"What do you like about it now?"</em></div></div></div>
+        <div class="spk-q-item backup"><div class="spk-q-num">+7</div><div class="spk-q-body"><div class="spk-q-text">What are your hobbies and why do you enjoy them?</div><button class="spk-hint-btn" onclick="toggleHint('h-B1-b7')">💡</button><div class="spk-hint" id="h-B1-b7"><em>"When did you start?"</em> · <em>"Do you do it alone or with others?"</em> · <em>"How often?"</em></div></div></div>
+        <div class="spk-q-item backup"><div class="spk-q-num">+8</div><div class="spk-q-body"><div class="spk-q-text">How has technology changed your daily life?</div><button class="spk-hint-btn" onclick="toggleHint('h-B1-b8')">💡</button><div class="spk-hint" id="h-B1-b8"><em>"Think: phone, internet, work, communication."</em> · <em>"Is the change positive or negative?"</em></div></div></div>
+      </div>
+
+      <div class="test-label">📊 Klucz</div>
+      <div class="qa-grid">
+        <div class="qa-item"><div class="qa-q">B1</div><div class="qa-a">I like travel. I've been to Germany. I watched Harry Potter. In evenings I read books.</div></div>
+        <div class="qa-item"><div class="qa-q">B2</div><div class="qa-a">My dream destination is Japan. My house would have solar panels and a garden. Family and health are most important.</div></div>
+      </div>
+      <div class="descriptor"><strong>B1:</strong> Relacjonuje, wyraża proste opinie, potrzebuje chwili na odpowiedź. <strong>B2:</strong> Prowadzi dyskusje, argumentuje, mówi płynnie, podaje konkretne przykłady i uzasadnienia.</div>
+
+      <div class="rating-section"><div class="rating-lbl">Ocena bloku B1/B2</div>
+        <div class="rating-btns">
+          <button class="rate-btn weak" onclick="setRating('s','B1','Weak')">✗ Weak</button>
+          <button class="rate-btn ok" onclick="setRating('s','B1','OK')">~ OK</button>
+          <button class="rate-btn strong" onclick="setRating('s','B1','Strong')">✓ Strong</button>
+        </div>
+        <div id="nudge-s-B1" class="nudge"><div class="nudge-text"></div><div class="nudge-btns"></div></div>
+        <div class="comment-wrap"><textarea class="comment-input" id="comm-s-B1" placeholder="Komentarz..." oninput="saveComment('s','B1',this.value)"></textarea></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── C1/C2 BLOCK ─── -->
+  <div class="level-block" id="lb-s-C1">
+    <div class="level-hdr" onclick="toggleLevel('s-C1')">
+      <div class="lvl-left">
+        <span class="lvl-badge">C1/C2</span>
+        <div><div class="lvl-title">Pytania abstrakcyjne i filozoficzne</div><div class="lvl-sub">Ambicje, dylematy moralne, złożone poglądy</div></div>
+      </div>
+      <div class="lvl-right" style="gap:12px;">
+        <div class="spk-timer-wrap" id="stw-C1">
+          <div class="spk-timer-display" id="spk-timer-C1">5:00</div>
+          <button class="spk-timer-btn" id="spk-tbtn-C1" onclick="event.stopPropagation();toggleSpeakingTimer('C1',300)">▶</button>
+        </div>
+        <span class="rating-pill none" id="pill-s-C1">— brak</span>
+        <span class="toggle-ico" id="ti-s-C1">▾</span>
+      </div>
+    </div>
+    <div class="level-body" id="body-s-C1">
+
+      <div class="test-label" style="margin-top:12px;">🗣 Pytania główne</div>
+      <div class="spk-qlist" id="main-s-C1">
+        <div class="spk-q-item">
+          <div class="spk-q-num">1</div>
+          <div class="spk-q-body">
+            <div class="spk-q-text">What is your biggest ambition in life — the one thing you really want to achieve?</div>
+            <button class="spk-hint-btn" onclick="toggleHint('h-C1-1')">💡 Zablokowany?</button>
+            <div class="spk-hint" id="h-C1-1">Spróbuj: <em>"Professional or personal ambition?"</em> · <em>"Something you've always wanted to do?"</em> · <em>"By when do you want to achieve it?"</em></div>
+          </div>
+        </div>
+        <div class="spk-q-item">
+          <div class="spk-q-num">2</div>
+          <div class="spk-q-body">
+            <div class="spk-q-text">If you were given a chance, would you live your life all over again?</div>
+            <button class="spk-hint-btn" onclick="toggleHint('h-C1-2')">💡 Zablokowany?</button>
+            <div class="spk-hint" id="h-C1-2">Spróbuj: <em>"Is there something you'd change?"</em> · <em>"What decision was most important?"</em> · <em>"Do you have regrets?"</em></div>
+          </div>
+        </div>
+        <div class="spk-q-item">
+          <div class="spk-q-num">3</div>
+          <div class="spk-q-body">
+            <div class="spk-q-text">What would you do with $1,000,000?</div>
+            <button class="spk-hint-btn" onclick="toggleHint('h-C1-3')">💡 Zablokowany?</button>
+            <div class="spk-hint" id="h-C1-3">Spróbuj: <em>"Invest, donate, travel, or something else?"</em> · <em>"Would you tell anyone?"</em> · <em>"Would it change you as a person?"</em></div>
+          </div>
+        </div>
+        <div class="spk-q-item">
+          <div class="spk-q-num">4</div>
+          <div class="spk-q-body">
+            <div class="spk-q-text">If stranded on a desert island — what one thing would you take with you?</div>
+            <button class="spk-hint-btn" onclick="toggleHint('h-C1-4')">💡 Zablokowany?</button>
+            <div class="spk-hint" id="h-C1-4">Spróbuj: <em>"Practical or emotional choice?"</em> · <em>"Would you want to be rescued?"</em> · <em>"What would you miss most?"</em></div>
+          </div>
+        </div>
+        <div class="spk-q-item">
+          <div class="spk-q-num">5</div>
+          <div class="spk-q-body">
+            <div class="spk-q-text">Does happiness depend more on success or on relationships?</div>
+            <button class="spk-hint-btn" onclick="toggleHint('h-C1-5')">💡 Zablokowany?</button>
+            <div class="spk-hint" id="h-C1-5">Spróbuj: <em>"Think of the happiest people you know."</em> · <em>"Can you be successful and unhappy?"</em> · <em>"What does success even mean to you?"</em></div>
+          </div>
+        </div>
+        <div class="spk-q-item">
+          <div class="spk-q-num">6</div>
+          <div class="spk-q-body">
+            <div class="spk-q-text">Should governments actively protect minority languages? Why / why not?</div>
+            <button class="spk-hint-btn" onclick="toggleHint('h-C1-6')">💡 Zablokowany?</button>
+            <div class="spk-hint" id="h-C1-6">Spróbuj: <em>"Think of Welsh, Irish, Catalan."</em> · <em>"Is it worth spending money on?"</em> · <em>"What do we lose when a language dies?"</em></div>
+          </div>
+        </div>
+      </div>
+
+      <button class="spk-more-btn" id="more-btn-C1" onclick="showBackup('C1')">+ Pokaż 8 pytań zapasowych</button>
+      <div class="spk-qlist spk-backup" id="backup-s-C1">
+        <div class="spk-backup-label">📦 Pytania zapasowe C1/C2</div>
+        <div class="spk-q-item backup"><div class="spk-q-num">+1</div><div class="spk-q-body"><div class="spk-q-text">Is social media making us more or less connected as people?</div><button class="spk-hint-btn" onclick="toggleHint('h-C1-b1')">💡</button><div class="spk-hint" id="h-C1-b1"><em>"Online vs offline connection."</em> · <em>"Does it depend on how you use it?"</em></div></div></div>
+        <div class="spk-q-item backup"><div class="spk-q-num">+2</div><div class="spk-q-body"><div class="spk-q-text">Should schools teach financial literacy as a core subject?</div><button class="spk-hint-btn" onclick="toggleHint('h-C1-b2')">💡</button><div class="spk-hint" id="h-C1-b2"><em>"Did you learn about money at school?"</em> · <em>"What would you include in such a course?"</em></div></div></div>
+        <div class="spk-q-item backup"><div class="spk-q-num">+3</div><div class="spk-q-body"><div class="spk-q-text">What does success mean to you personally — and has it changed over time?</div><button class="spk-hint-btn" onclick="toggleHint('h-C1-b3')">💡</button><div class="spk-hint" id="h-C1-b3"><em>"When did you feel most successful?"</em> · <em>"Do other people's opinions matter?"</em></div></div></div>
+        <div class="spk-q-item backup"><div class="spk-q-num">+4</div><div class="spk-q-body"><div class="spk-q-text">Is it possible to be truly objective about anything?</div><button class="spk-hint-btn" onclick="toggleHint('h-C1-b4')">💡</button><div class="spk-hint" id="h-C1-b4"><em>"Think: news, science, personal opinions."</em> · <em>"Can you give an example?"</em></div></div></div>
+        <div class="spk-q-item backup"><div class="spk-q-num">+5</div><div class="spk-q-body"><div class="spk-q-text">What responsibility do wealthy countries have towards poorer ones?</div><button class="spk-hint-btn" onclick="toggleHint('h-C1-b5')">💡</button><div class="spk-hint" id="h-C1-b5"><em>"Aid, trade, migration, climate."</em> · <em>"Is it charity or obligation?"</em></div></div></div>
+        <div class="spk-q-item backup"><div class="spk-q-num">+6</div><div class="spk-q-body"><div class="spk-q-text">Should animals have legal rights similar to humans?</div><button class="spk-hint-btn" onclick="toggleHint('h-C1-b6')">💡</button><div class="spk-hint" id="h-C1-b6"><em>"Which animals?"</em> · <em>"What rights specifically?"</em> · <em>"Where do you draw the line?"</em></div></div></div>
+        <div class="spk-q-item backup"><div class="spk-q-num">+7</div><div class="spk-q-body"><div class="spk-q-text">Is it ever morally acceptable to lie?</div><button class="spk-hint-btn" onclick="toggleHint('h-C1-b7')">💡</button><div class="spk-hint" id="h-C1-b7"><em>"White lies?"</em> · <em>"Lying to protect someone?"</em> · <em>"Does intention matter?"</em></div></div></div>
+        <div class="spk-q-item backup"><div class="spk-q-num">+8</div><div class="spk-q-body"><div class="spk-q-text">If you could change one thing about the world, what would it be and why?</div><button class="spk-hint-btn" onclick="toggleHint('h-C1-b8')">💡</button><div class="spk-hint" id="h-C1-b8"><em>"Big or small change?"</em> · <em>"Would it have unintended consequences?"</em></div></div></div>
+      </div>
+
+      <div class="test-label">📊 Klucz</div>
+      <div class="qa-grid">
+        <div class="qa-item"><div class="qa-q">C1</div><div class="qa-a">My ambition is to become a doctor. I would live my life again. With $1M I would study, donate and travel.</div></div>
+        <div class="qa-item"><div class="qa-q">C2</div><div class="qa-a">I'd take a satellite phone. Happiness is inherently relational. Governments have a moral duty to preserve linguistic heritage through education.</div></div>
+      </div>
+      <div class="descriptor"><strong>C1:</strong> Płynny i spontaniczny, precyzyjnie wyraża złożone poglądy, bogaty zasób. <strong>C2:</strong> Swobodny, elastyczny, subtelne niuanse, humor i ironia, niemal jak native speaker.</div>
+
+      <div class="rating-section"><div class="rating-lbl">Ocena bloku C1/C2</div>
+        <div class="rating-btns">
+          <button class="rate-btn weak" onclick="setRating('s','C1','Weak')">✗ Weak</button>
+          <button class="rate-btn ok" onclick="setRating('s','C1','OK')">~ OK</button>
+          <button class="rate-btn strong" onclick="setRating('s','C1','Strong')">✓ Strong</button>
+        </div>
+        <div id="nudge-s-C1" class="nudge"><div class="nudge-text"></div><div class="nudge-btns"></div></div>
+        <div class="comment-wrap"><textarea class="comment-input" id="comm-s-C1" placeholder="Komentarz..." oninput="saveComment('s','C1',this.value)"></textarea></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="nav-btns">
+    <button class="btn btn-ghost" onclick="goTo(4)">← Writing</button>
+    <button class="btn btn-gold" onclick="validateAndCalc()">📊 Oblicz wynik →</button>
+  </div>
+</section>
+
+
+
+  <div class="level-block" id="lb-s-A1">
+    <div class="level-hdr" onclick="toggleLevel('s-A1')">
+      <div class="lvl-left"><span class="lvl-badge">A1/A2</span><div><div class="lvl-title">Pytania osobiste i codzienne</div><div class="lvl-sub">Kim jesteś, praca/szkoła, czas wolny</div></div></div>
+      <div class="lvl-right"><span class="rating-pill none" id="pill-s-A1">— brak</span><span class="toggle-ico" id="ti-s-A1">▾</span></div>
+    </div>
+    <div class="level-body open" id="body-s-A1">
+      <div class="test-label" style="margin-top:12px;">🗣 Pytania</div>
+      <div class="test-text" style="background:var(--navy);color:var(--gold-pale);line-height:2.2;">
+        1. Can you tell me something about yourself?<br>
+        2. Do you have any brothers or sisters?<br>
+        3. Where did you go to school? / What school do you go to?<br>
+        4. What do you do for a living? / What is your job?<br>
+        5. What do you do after work / school?
+      </div>
+      <div class="test-label">📊 Klucz oceny</div>
+      <div class="qa-grid">
+        <div class="qa-item"><div class="qa-q">A1 — odpowiedź modelowa</div><div class="qa-a">My name is Ola. I am ten. I have one brother. After school I play football.</div></div>
+        <div class="qa-item"><div class="qa-q">A2 — odpowiedź modelowa</div><div class="qa-a">I went to the seaside. At weekends I meet friends. My favourite place is the park near my house.</div></div>
+      </div>
+      <div class="descriptor" style="margin-top:12px;"><strong>A1:</strong> Krótkie zdania, potrzebuje wsparcia, mówi wolno. <strong>A2:</strong> Opisuje znane miejsca i ludzi, zadaje proste pytania, radzi sobie w podstawowych sytuacjach.</div>
+      <div class="rating-section"><div class="rating-lbl">Ocena bloku A1/A2</div>
+        <div class="rating-btns">
+          <button class="rate-btn weak" onclick="setRating('s','A1','Weak')">✗ Weak</button>
+          <button class="rate-btn ok" onclick="setRating('s','A1','OK')">~ OK</button>
+          <button class="rate-btn strong" onclick="setRating('s','A1','Strong')">✓ Strong</button>
+        </div>
+        <div id="nudge-s-A1" class="nudge"><div class="nudge-text"></div><div class="nudge-btns"></div></div>
+        <div class="comment-wrap"><textarea class="comment-input" id="comm-s-A1" placeholder="Komentarz (tempo, płynność, zasób słownictwa)..." oninput="saveComment('s','A1',this.value)"></textarea></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="level-block" id="lb-s-B1">
+    <div class="level-hdr" onclick="toggleLevel('s-B1')">
+      <div class="lvl-left"><span class="lvl-badge">B1/B2</span><div><div class="lvl-title">Opinie, marzenia, wartości</div><div class="lvl-sub">Podróże, dom marzeń, ważne rzeczy</div></div></div>
+      <div class="lvl-right"><span class="rating-pill none" id="pill-s-B1">— brak</span><span class="toggle-ico" id="ti-s-B1">▾</span></div>
+    </div>
+    <div class="level-body" id="body-s-B1">
+      <div class="test-label" style="margin-top:12px;">🗣 Pytania</div>
+      <div class="test-text" style="background:var(--navy);color:var(--gold-pale);line-height:2.2;">
+        1. Do you like to travel? Where have you been so far?<br>
+        2. What is the place you have always dreamed of going to?<br>
+        3. Tell me about a movie you have recently watched.<br>
+        4. Tell me about your dream house — what would it look like?<br>
+        5. What do you consider to be important in life?
+      </div>
+      <div class="test-label">📊 Klucz</div>
+      <div class="qa-grid">
+        <div class="qa-item"><div class="qa-q">B1</div><div class="qa-a">I like to travel. I have been to Germany. I watched Harry Potter. In the evenings I read books.</div></div>
+        <div class="qa-item"><div class="qa-q">B2</div><div class="qa-a">My dream destination is Japan. My dream house has solar panels. Family and health are most important.</div></div>
+      </div>
+      <div class="descriptor"><strong>B1:</strong> Relacjonuje wydarzenia, wyraża proste opinie, potrzebuje chwili. <strong>B2:</strong> Prowadzi dyskusje, argumentuje, mówi płynnie, podaje konkretne przykłady.</div>
+      <div class="rating-section"><div class="rating-lbl">Ocena bloku B1/B2</div>
+        <div class="rating-btns">
+          <button class="rate-btn weak" onclick="setRating('s','B1','Weak')">✗ Weak</button>
+          <button class="rate-btn ok" onclick="setRating('s','B1','OK')">~ OK</button>
+          <button class="rate-btn strong" onclick="setRating('s','B1','Strong')">✓ Strong</button>
+        </div>
+        <div id="nudge-s-B1" class="nudge"><div class="nudge-text"></div><div class="nudge-btns"></div></div>
+        <div class="comment-wrap"><textarea class="comment-input" id="comm-s-B1" placeholder="Komentarz..." oninput="saveComment('s','B1',this.value)"></textarea></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="level-block" id="lb-s-C1">
+    <div class="level-hdr" onclick="toggleLevel('s-C1')">
+      <div class="lvl-left"><span class="lvl-badge">C1/C2</span><div><div class="lvl-title">Pytania abstrakcyjne i filozoficzne</div><div class="lvl-sub">Ambicje, dylematy, języki, szczęście</div></div></div>
+      <div class="lvl-right"><span class="rating-pill none" id="pill-s-C1">— brak</span><span class="toggle-ico" id="ti-s-C1">▾</span></div>
+    </div>
+    <div class="level-body" id="body-s-C1">
+      <div class="test-label" style="margin-top:12px;">🗣 Pytania</div>
+      <div class="test-text" style="background:var(--navy);color:var(--gold-pale);line-height:2.2;">
+        1. What is your biggest ambition in life — the one thing you really want to achieve?<br>
+        2. If you were given a chance, would you live your life all over again?<br>
+        3. What would you do with $1,000,000?<br>
+        4. If stranded on a desert island — what one thing would you take?<br>
+        5. Does happiness depend more on success or relationships?<br>
+        6. Should governments protect minority languages? Why / why not?
+      </div>
+      <div class="test-label">📊 Klucz</div>
+      <div class="qa-grid">
+        <div class="qa-item"><div class="qa-q">C1</div><div class="qa-a">My ambition is to become a doctor. I would live my life again. With $1M I would study, donate, and travel.</div></div>
+        <div class="qa-item"><div class="qa-q">C2</div><div class="qa-a">I'd take a satellite phone. Happiness is inherently relational. Governments have a moral duty to preserve linguistic heritage.</div></div>
+      </div>
+      <div class="descriptor"><strong>C1:</strong> Płynny i spontaniczny, precyzyjnie wyraża złożone poglądy. <strong>C2:</strong> Swobodny, elastyczny, bogate słownictwo, subtelne niuanse, humor i ironia.</div>
+      <div class="rating-section"><div class="rating-lbl">Ocena bloku C1/C2</div>
+        <div class="rating-btns">
+          <button class="rate-btn weak" onclick="setRating('s','C1','Weak')">✗ Weak</button>
+          <button class="rate-btn ok" onclick="setRating('s','C1','OK')">~ OK</button>
+          <button class="rate-btn strong" onclick="setRating('s','C1','Strong')">✓ Strong</button>
+        </div>
+        <div id="nudge-s-C1" class="nudge"><div class="nudge-text"></div><div class="nudge-btns"></div></div>
+        <div class="comment-wrap"><textarea class="comment-input" id="comm-s-C1" placeholder="Komentarz..." oninput="saveComment('s','C1',this.value)"></textarea></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="nav-btns">
+    <button class="btn btn-ghost" onclick="goTo(4)">← Writing</button>
+    <button class="btn btn-gold" onclick="validateAndCalc()">📊 Oblicz wynik →</button>
+  </div>
+</section>
+
+<!-- ═══ 5 — WYNIK ═══ -->
+<section class="section" id="sec-6">
+  <div class="page-title">📊 Wynik ewaluacji</div>
+  <div class="page-sub" id="sum-meta">Prestige Lingua <span class="dot"></span> Raport końcowy</div>
+
+  <div class="summary-tabs">
+    <button class="sum-tab active" onclick="switchSumTab('lektor')">📋 Widok lektora</button>
+    <button class="sum-tab" onclick="switchSumTab('parent')">👪 Raport dla rodzica / ucznia</button>
+  </div>
+
+  <!-- LEKTOR VIEW -->
+  <div class="sum-panel active" id="sum-lektor">
+    <div class="summary-hero">
+      <div class="sh-level">
+        <div class="sh-lbl">Ogólny poziom CEFR</div>
+        <div class="sh-val" id="res-overall">—</div>
+        <div class="sh-name" id="res-overall-name">—</div>
+      </div>
+      <div class="sh-skills" id="sh-skills-grid"></div>
+    </div>
+
+    <div class="skills-tbl">
+      <div class="tbl-hdr"><div>Sprawność</div><div>Poziom</div><div>Ocena</div><div>Komentarz</div></div>
+      <div id="tbl-rows"></div>
+    </div>
+
+    <div class="course-card">
+      <h3>🎯 Rekomendacja kursu</h3>
+      <div class="course-hint" id="course-hint-text">Wybierz kursy rekomendowane dla ucznia (sugerowane są pogrubione)</div>
+      <div class="course-chips" id="course-chips-lektor"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">📝 Notatki lektora</div>
+      <div class="notes-grid">
+        <div class="form-group">
+          <div class="form-label">🌟 Mocne strony</div>
+          <textarea class="notes-ta" id="note-strengths" placeholder="np. doskonała wymowa, bogaty zasób, pewność siebie..." oninput="saveNote('strengths',this.value)"></textarea>
+        </div>
+        <div class="form-group">
+          <div class="form-label">📈 Obszary do rozwoju</div>
+          <textarea class="notes-ta" id="note-improve" placeholder="np. gramatyka przeszła, pisownia, słuchanie szybszych wypowiedzi..." oninput="saveNote('improve',this.value)"></textarea>
+        </div>
+        <div class="form-group full">
+          <div class="form-label">💬 Komentarz końcowy (dla rodzica)</div>
+          <textarea class="notes-ta" id="note-final" placeholder="np. Uczeń wykazuje duże zaangażowanie i szybko przyswaja nowe struktury..." style="min-height:72px;" oninput="saveNote('final',this.value)"></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PARENT VIEW -->
+  <div class="sum-panel" id="sum-parent">
+    <div id="parent-report">
+      <div class="pr-header">
+        <div class="pr-logo">Prestige Lingua</div>
+        <div class="pr-title">Raport ewaluacyjny</div>
+        <div class="pr-meta" id="pr-meta-data"></div>
+      </div>
+      <div class="pr-level-banner">
+        <div class="pr-level-label">Poziom języka angielskiego</div>
+        <div class="pr-level-val" id="pr-level-val">—</div>
+        <div class="pr-level-name" id="pr-level-name">—</div>
+        <div class="pr-level-desc" id="pr-level-desc">—</div>
+      </div>
+      <div class="pr-section">
+        <div class="pr-section-title">🌟 Co potrafi uczeń / uczennica?</div>
+        <div class="pr-skill-list" id="pr-can-do-list"></div>
+      </div>
+      <div class="pr-section" id="pr-strengths-section">
+        <div class="pr-section-title">💪 Mocne strony</div>
+        <div class="pr-comment-box" id="pr-strengths-box">—</div>
+      </div>
+      <div class="pr-section" id="pr-improve-section">
+        <div class="pr-section-title">📈 Nad czym warto pracować</div>
+        <div class="pr-comment-box" id="pr-improve-box">—</div>
+      </div>
+      <div class="pr-section">
+        <div class="pr-section-title">🎯 Rekomendowany kurs Prestige Lingua</div>
+        <div class="pr-courses" id="pr-courses-list"></div>
+      </div>
+      <div class="pr-section" id="pr-final-section">
+        <div class="pr-section-title">📝 Słowo od lektora</div>
+        <div class="pr-comment-box" id="pr-final-box">—</div>
+      </div>
+      <div class="pr-footer" id="pr-footer-el">
+        <strong>Prestige Lingua – Szkoła Językowa Premium</strong><br>
+        Gdańsk Wrzeszcz, ul. Wajdeloty | Gdańsk Jasień, Lawendowe Wzgórze 24 | Straszyn, ul. Leśna 2<br>
+        <a href="https://www.prestigelingua.pl">www.prestigelingua.pl</a>
+      </div>
+    </div>
+
+    <!-- AI REPORT GENERATOR -->
+    <div class="ai-section" style="margin-top:20px;">
+      <div class="card">
+        <div class="card-title" style="font-size:17px;">✨ Spersonalizowany raport AI</div>
+        <p style="font-size:13px;color:var(--slate);margin-bottom:14px;line-height:1.55;">
+          Wygeneruj unikalny, ciepły raport dla rodzica/ucznia — Claude przeanalizuje wszystkie oceny
+          i komentarze lektora, i napisze spersonalizowany tekst po polsku.
+        </p>
+        <button class="ai-generate-btn" id="ai-gen-btn" onclick="generateAIReport()">
+          ✨ Generuj spersonalizowany raport AI
+        </button>
+        <div class="ai-loading" id="ai-loading">
+          <div class="ai-spinner"></div>
+          <div style="font-size:13px;">Claude analizuje oceny i komentarze lektora...</div>
+        </div>
+        <div class="ai-result" id="ai-result">
+          <div style="font-size:11px;font-weight:600;color:var(--gold);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">✨ Wygenerowany raport dla rodzica</div>
+          <div class="ai-result-text" id="ai-result-text"></div>
+          <div class="ai-result-actions">
+            <button class="ai-action-btn ai-copy-btn" onclick="copyAIReport()">📋 Kopiuj tekst</button>
+            <button class="ai-action-btn ai-regen-btn" onclick="generateAIReport()">↻ Generuj ponownie</button>
+          </div>
+          <div class="ai-hint">💡 Skopiuj tekst do pola "Słowo od lektora" powyżej, aby pojawił się w drukowanym raporcie.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="nav-btns">
+    <button class="btn btn-ghost" onclick="goTo(5)">← Speaking</button>
+    <div style="display:flex;gap:10px;">
+      <button class="btn btn-ghost" onclick="exportPDF()">📄 Zapisz PDF</button>
+      <button class="btn btn-gold" onclick="validateAndCalc()">↻ Przelicz</button>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- NOTION BANNER -->
+<div id="notion-banner" style="display:none;position:fixed;bottom:20px;right:20px;z-index:300;background:var(--white);border:1.5px solid var(--border);border-radius:12px;padding:14px 18px;box-shadow:var(--sh-lg);max-width:280px;">
+  <div style="font-size:11px;font-weight:600;color:var(--slate);text-transform:uppercase;letter-spacing:.9px;margin-bottom:6px;">📒 Prestige Insight — baza sesji</div>
+  <div style="font-size:13px;color:var(--navy);margin-bottom:10px;line-height:1.5;">Ewaluacja gotowa — zapisz wyniki w Notion.</div>
+  <a href="https://www.notion.so/33cd58a85f768110b020cbc3aa8166ed" target="_blank" style="display:block;background:var(--navy);color:var(--gold);text-decoration:none;padding:8px 14px;border-radius:7px;font-size:13px;font-weight:600;text-align:center;">Otwórz bazę →</a>
+  <button onclick="document.getElementById('notion-banner').style.display='none'" style="position:absolute;top:8px;right:10px;background:none;border:none;color:var(--slate-light);cursor:pointer;font-size:18px;line-height:1;">×</button>
+</div>
+
+<!-- VALIDATION MODAL -->
+<div class="modal-overlay hidden" id="validation-modal">
+  <div class="modal-box">
+    <div class="modal-icon">⚠️</div>
+    <div class="modal-title">Za mało ocen do obliczenia wyniku</div>
+    <div class="modal-body">
+      Aby wynik był wiarygodny, oceń przynajmniej <strong>Speaking</strong> oraz jedną dodatkową sprawność.
+      Aktualny stan ocen:
+      <div class="modal-skill-list" id="modal-skill-list"></div>
+    </div>
+    <div class="modal-btns">
+      <button class="modal-btn modal-btn-ghost" onclick="closeValidationModal()">Wróć i oceń</button>
+      <button class="modal-btn modal-btn-primary" onclick="forceCalcAndShow()">Generuj mimo to →</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════
+// STATE & STORAGE
+// ═══════════════════════════════════════════════
+const STORE_KEY = 'pl_eval_v2';
+let state = { student:{}, ratings:{}, comments:{}, rubrics:{}, notes:{} };
+
+function loadState(){
+  try{
+    const s = localStorage.getItem(STORE_KEY);
+    if(s){ state = JSON.parse(s); return true; }
+  } catch(e){}
+  return false;
+}
+
+function saveState(){
+  try{
+    localStorage.setItem(STORE_KEY, JSON.stringify(state));
+    const ind = document.getElementById('saveInd');
+    ind.classList.add('show');
+    clearTimeout(ind._t);
+    ind._t = setTimeout(()=>ind.classList.remove('show'),1500);
+  } catch(e){}
+}
+
+function saveField(field, val){ state.student[field]=val; saveState(); }
+function saveComment(skill,level,val){ state.comments[skill+'-'+level]=val; saveState(); }
+function saveNote(field,val){ state.notes[field]=val; saveState(); }
+
+function newSession(){
+  if(!confirm('Wyczyścić sesję i zacząć od nowa?')) return;
+  localStorage.removeItem(STORE_KEY);
+  location.reload();
+}
+
+function applyLoadedState(){
+  // Student fields
+  const sf = state.student||{};
+  ['fname','lname','evalDate','lektor','ageType','location'].forEach(f=>{
+    const el = document.getElementById(f);
+    if(el && sf[f]) el.value = sf[f];
+  });
+  // Ratings
+  Object.entries(state.ratings||{}).forEach(([key,val])=>{
+    const [skill,level] = key.split('-');
+    applyRatingUI(skill,level,val);
+  });
+  // Comments
+  Object.entries(state.comments||{}).forEach(([key,val])=>{
+    const el = document.getElementById('comm-'+key);
+    if(el) el.value = val;
+  });
+  // Rubrics
+  Object.entries(state.rubrics||{}).forEach(([key,val])=>{
+    applyRubricUI(key,val);
+  });
+  // Notes
+  const n = state.notes||{};
+  ['strengths','improve','final'].forEach(f=>{
+    const el = document.getElementById('note-'+f);
+    if(el && n[f]) el.value = n[f];
+  });
+}
+
+// ═══════════════════════════════════════════════
+// INTAKE FORM
+// ═══════════════════════════════════════════════
+const intakeState = {};
+
+function toggleIntake(groupId, value){
+  const container = document.getElementById(groupId);
+  if(!container) return;
+  
+  // Check if multi-select group (hobbies, prior)
+  const multiGroups = ['q-hobbies','q-prior','q-goal','q-needs'];
+  const isMulti = multiGroups.includes(groupId);
+  
+  const btns = container.querySelectorAll('.intake-opt');
+  if(!isMulti){
+    // Single select — deselect others
+    btns.forEach(b => b.classList.remove('selected'));
+    intakeState[groupId] = value;
+  } else {
+    // Multi select
+    if(!intakeState[groupId]) intakeState[groupId] = [];
+    const idx = intakeState[groupId].indexOf(value);
+    if(idx >= 0) intakeState[groupId].splice(idx, 1);
+    else intakeState[groupId].push(value);
+  }
+  
+  // Update button visual
+  btns.forEach(b => {
+    const isSelected = isMulti
+      ? (intakeState[groupId] && intakeState[groupId].includes(b.textContent.trim()) || b.getAttribute('onclick').includes(value) && !isMulti)
+      : b.getAttribute('onclick').includes(`'${value}'`);
+    if(isMulti){
+      const bVal = b.getAttribute('onclick').match(/'([^']+)'\)$/)?.[1];
+      b.classList.toggle('selected', intakeState[groupId] && intakeState[groupId].includes(bVal));
+    } else {
+      b.classList.toggle('selected', b.getAttribute('onclick').includes(`'${value}'`));
+    }
+  });
+  
+  saveState();
+  updateGroupSuggestion();
+}
+
+function saveIntakeNote(field, val){
+  if(!state.intake) state.intake = {};
+  state.intake[field] = val;
+  saveState();
+  updateGroupSuggestion();
+}
+
+function updateGroupSuggestion(){
+  const sg = document.getElementById('group-suggestion-text');
+  const sd = document.getElementById('group-suggestion-detail');
+  if(!sg) return;
+  
+  const goal = intakeState['q-goal'] || [];
+  const grade = intakeState['q-grade'] || '';
+  const schoolAlign = intakeState['q-school-align'] || '';
+  const groupPref = intakeState['q-group-pref'] || '';
+  const time = intakeState['q-time'] || '';
+  const freq = intakeState['q-freq'] || '';
+  const attitude = intakeState['q-attitude'] || '';
+  const needs = intakeState['q-needs'] || [];
+  const ageType = document.getElementById('ageType')?.value || '';
+  
+  // Need at least 2 answers to suggest
+  const answered = [goal.length>0, grade, schoolAlign, groupPref, time, freq].filter(Boolean).length;
+  if(answered < 2){
+    sg.textContent = 'Wypełnij jeszcze kilka odpowiedzi — sugestia pojawi się automatycznie.';
+    sd.textContent = '';
+    return;
+  }
+  
+  // ALGORITHM
+  let suggestions = [];
+  let reasons = [];
+  
+  const wantsCambridge = goal.includes('Egzamin Cambridge');
+  const wantsSchool = schoolAlign.includes('materiał ze szkoły') || schoolAlign.includes('ten sam');
+  const wantsSpeaking = goal.includes('Swobodne mówienie') || schoolAlign.includes('Własna ścieżka');
+  const wantsCatchUp = goal.includes('Nadrobienie zaległości');
+  const isChild = ageType === 'child';
+  const isTeen = ageType === 'teen' || ageType === 'teen2';
+  const lowGrade = grade.includes('1') || grade.includes('2') || grade.includes('3');
+  const highGrade = grade.includes('5') || grade.includes('6');
+  const smallGroup = groupPref.includes('Mała') || groupPref.includes('3-4');
+  const individual = groupPref.includes('Indywidualnie');
+  const specialNeeds = needs.some(n => n.includes('Dysleksja') || n.includes('ADHD') || n.includes('Wolniejsze'));
+  const lowTime = time.includes('Do 15') || time.includes('brak pracy');
+  const highFreq = freq.includes('2 razy') || freq.includes('3 lub');
+  
+  if(individual || specialNeeds){
+    suggestions.push('🎯 Kurs indywidualny');
+    reasons.push(individual ? 'Rodzic preferuje zajęcia 1:1' : 'Specjalne potrzeby edukacyjne wymagają dostosowania tempa');
+  }
+  
+  if(isChild && wantsCambridge){
+    suggestions.push('📗 Cambridge YLE (Starters / Movers / Flyers)');
+    reasons.push('Dziecko + cel egzaminacyjny = ścieżka Cambridge Young Learners');
+  }
+  
+  if(isChild && !wantsCambridge){
+    suggestions.push('⭐ Savvy Ed (7–11 lat)');
+    reasons.push('Wiek i profil wskazują na grupę Savvy Ed z metodologią Communication First');
+  }
+  
+  if(isTeen && wantsCambridge && highGrade){
+    suggestions.push('📘 Cambridge KET / PET — zależnie od wyniku ewaluacji');
+    reasons.push('Nastolatek z dobrymi ocenami i celem egzaminacyjnym — ścieżka Cambridge');
+  }
+  
+  if(isTeen && !wantsCambridge){
+    suggestions.push("📙 Edward's League");
+    reasons.push("Nastolatek bez celu egzaminacyjnego — Edward's League dopasuje poziom");
+  }
+  
+  if(!isChild && !isTeen && wantsSpeaking){
+    suggestions.push('💬 Tea Talk / Ladies Talk (konwersacje)');
+    reasons.push('Dorosły priorytetyzuje mówienie i komunikację');
+  }
+  
+  if(!isChild && !isTeen && wantsCambridge){
+    suggestions.push('📗 Cambridge FCE / CAE — zależnie od wyniku');
+    reasons.push('Dorosły z celem egzaminacyjnym — poziom ustali ewaluacja');
+  }
+  
+  if(wantsCatchUp || (lowGrade && wantsSchool)){
+    if(!suggestions.some(s => s.includes('indywidualny'))){
+      suggestions.push('🎯 Kurs indywidualny (nadrabianie zaległości)');
+      reasons.push('Niskie oceny + chęć nadrobienia = indywidualne tempo');
+    }
+  }
+  
+  if(highFreq && !lowTime){
+    reasons.push('Wysoka częstotliwość zajęć — dobry fundament pod szybkie postępy');
+  }
+  
+  if(lowTime && !individual){
+    reasons.push('⚠️ Mało czasu na pracę własną — warto ustawić realistyczne oczekiwania');
+  }
+  
+  if(smallGroup && suggestions.length > 0){
+    reasons.push('Preferuje małą grupę — uwzględnij przy przydziale');
+  }
+  
+  if(suggestions.length === 0){
+    sg.textContent = 'Profil mieszany — rekomendacja wymaga rozmowy z metodykiem.';
+    sd.textContent = '';
+    return;
+  }
+  
+  sg.innerHTML = suggestions.map(s => `<div style="margin-bottom:4px;">→ ${s}</div>`).join('');
+  sd.innerHTML = reasons.map(r => `<div style="margin-bottom:3px;">· ${r}</div>`).join('');
+}
+
+// ═══════════════════════════════════════════════
+// TIMER
+// ═══════════════════════════════════════════════
+let timerSec=0, timerRunning=false, timerInt=null;
+function pad(n){return n<10?'0'+n:n;}
+function toggleTimer(){
+  if(timerRunning){
+    clearInterval(timerInt); timerRunning=false;
+    document.getElementById('timerBtn').textContent='▶ Start';
+  } else {
+    timerRunning=true;
+    document.getElementById('timerBtn').textContent='⏸ Pauza';
+    timerInt=setInterval(()=>{
+      timerSec++;
+      const d=document.getElementById('timerDisp');
+      d.textContent=pad(Math.floor(timerSec/60))+':'+pad(timerSec%60);
+      if(timerSec>=1800) d.classList.add('warn'); else d.classList.remove('warn');
+    },1000);
+  }
+}
+
+// ═══════════════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════════════
+const SECS=['sec-0','sec-1','sec-2','sec-3','sec-4','sec-5','sec-6'];
+let currentStep=0;
+function goTo(idx){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.getElementById(SECS[idx]).classList.add('active');
+  document.querySelectorAll('.step-btn').forEach((b,i)=>{
+    b.classList.remove('active','done');
+    if(i<idx){ b.classList.add('done'); b.querySelector('.step-num').textContent='✓'; }
+    else if(i===idx) b.classList.add('active');
+    else { const nums=['1','🎧','📖','✍️','🗣','📊']; b.querySelector('.step-num').textContent=nums[i]; }
+  });
+  currentStep=idx;
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ═══════════════════════════════════════════════
+// TOGGLE LEVEL BODY
+// ═══════════════════════════════════════════════
+function toggleLevel(id){
+  const body=document.getElementById('body-'+id);
+  const ico=document.getElementById('ti-'+id);
+  body.classList.toggle('open');
+  ico.style.transform=body.classList.contains('open')?'rotate(180deg)':'';
+}
+
+// ═══════════════════════════════════════════════
+// LEVEL ORDER FOR ADAPTIVE LOGIC
+// ═══════════════════════════════════════════════
+const LEVELS=['A1','A2','B1','B2','C1','C2'];
+const SKILL_LEVELS={
+  l:['A1','B1','B2','C1','C2'],  // A1 covers A1/A2 in listening
+  r:['A1','A2','B1','B2','C1','C2'],
+  w:['A1','A2','B1','B2','C1','C2'],
+  s:['A1','B1','C1']             // speaking uses groups
+};
+
+function getNextBlock(skill, level){
+  const seq = SKILL_LEVELS[skill];
+  const idx = seq.indexOf(level);
+  if(idx>=0 && idx<seq.length-1) return seq[idx+1];
+  return null;
+}
+
+function getPrevBlock(skill, level){
+  const seq = SKILL_LEVELS[skill];
+  const idx = seq.indexOf(level);
+  if(idx>0) return seq[idx-1];
+  return null;
+}
+
+// ═══════════════════════════════════════════════
+// RATING
+// ═══════════════════════════════════════════════
+function setRating(skill, level, value){
+  const key = skill+'-'+level;
+  state.ratings[key] = value;
+  saveState();
+  applyRatingUI(skill, level, value);
+  showNudge(skill, level, value);
+  // If writing, auto-calc from rubric if rubric is empty
+}
+
+function applyRatingUI(skill, level, value){
+  const key = skill+'-'+level;
+  const pill = document.getElementById('pill-'+key);
+  if(pill){
+    pill.className='rating-pill '+value.toLowerCase();
+    pill.textContent = value==='Weak'?'✗ Weak': value==='OK'?'~ OK':'✓ Strong';
+  }
+  const block = document.getElementById('lb-'+key);
+  if(block) block.className='level-block rated-'+value.toLowerCase();
+  // Update buttons
+  const body = document.getElementById('body-'+key);
+  if(body){
+    body.querySelectorAll('.rate-btn').forEach(btn=>{
+      btn.classList.remove('active');
+      if(btn.classList.contains(value.toLowerCase())) btn.classList.add('active');
+    });
+  }
+}
+
+// ═══════════════════════════════════════════════
+// ADAPTIVE NUDGE
+// ═══════════════════════════════════════════════
+function showNudge(skill, level, value){
+  const key = skill+'-'+level;
+  const nudgeEl = document.getElementById('nudge-'+key);
+  if(!nudgeEl) return;
+
+  const next = getNextBlock(skill, level);
+  const prev = getPrevBlock(skill, level);
+
+  nudgeEl.innerHTML='';
+  nudgeEl.className='nudge';
+
+  if(value==='Strong' && next){
+    nudgeEl.className='nudge strong-nudge show';
+    nudgeEl.innerHTML=`
+      <div class="nudge-text">✅ <strong>Strong!</strong> Uczeń dobrze radzi sobie na tym poziomie. Sprawdź poziom <strong>${formatNextLabel(skill,next)}</strong>?</div>
+      <div class="nudge-btns">
+        <button class="nudge-btn yes-btn" onclick="advanceTo('${skill}','${next}')">Tak, przejdź →</button>
+        <button class="nudge-btn skip-btn strong-skip" onclick="dismissNudge('${key}')">Pomiń</button>
+      </div>`;
+  } else if(value==='OK' && next){
+    nudgeEl.className='nudge ok-nudge show';
+    nudgeEl.innerHTML=`
+      <div class="nudge-text">~ <strong>OK</strong> — poziom opanowany. Warto sprawdzić <strong>${formatNextLabel(skill,next)}</strong>, by dokładniej ustalić granicę?</div>
+      <div class="nudge-btns">
+        <button class="nudge-btn yes-btn" onclick="advanceTo('${skill}','${next}')">Sprawdź →</button>
+        <button class="nudge-btn skip-btn ok-skip" onclick="dismissNudge('${key}')">Zostań tu</button>
+      </div>`;
+  } else if(value==='Weak'){
+    const msg = prev
+      ? `✗ <strong>Weak</strong> — uczeń ma trudności. Zatrzymaj się tutaj lub cofnij do <strong>${formatNextLabel(skill,prev)}</strong>.`
+      : `✗ <strong>Weak</strong> — poziom poniżej A1. Zatrzymaj ewaluację dla tej sprawności.`;
+    nudgeEl.className='nudge weak-nudge show';
+    nudgeEl.innerHTML=`
+      <div class="nudge-text">${msg}</div>
+      <div class="nudge-btns">
+        ${prev?`<button class="nudge-btn yes-btn" onclick="advanceTo('${skill}','${prev}')">← Cofnij do ${formatNextLabel(skill,prev)}</button>`:''}
+        <button class="nudge-btn skip-btn weak-skip" onclick="dismissNudge('${key}')">Rozumiem</button>
+      </div>`;
+  }
+}
+
+function formatNextLabel(skill, level){
+  if(skill==='s'){
+    if(level==='A1') return 'A1/A2';
+    if(level==='B1') return 'B1/B2';
+    if(level==='C1') return 'C1/C2';
+  }
+  return level;
+}
+
+function advanceTo(skill, level){
+  const body = document.getElementById('body-'+skill+'-'+level);
+  const ico = document.getElementById('ti-'+skill+'-'+level);
+  if(body){
+    body.classList.add('open');
+    if(ico) ico.style.transform='rotate(180deg)';
+    setTimeout(()=>body.scrollIntoView({behavior:'smooth',block:'center'}),100);
+  }
+}
+
+function dismissNudge(key){
+  const el=document.getElementById('nudge-'+key);
+  if(el) el.classList.remove('show');
+}
+
+// ═══════════════════════════════════════════════
+// WRITING RUBRIC
+// ═══════════════════════════════════════════════
+function setRubric(skill, level, criterion, value){
+  const rKey = skill+'-'+level+'-'+criterion;
+  state.rubrics[rKey] = value;
+  saveState();
+  applyRubricUI(rKey, value);
+  // Auto-calculate overall writing rating from rubric
+  autoCalcWriting(level);
+}
+
+function applyRubricUI(rKey, value){
+  // rKey = e.g. 'w-A1-grammar'
+  const [skill, level, crit] = rKey.split('-');
+  const rubricEl = document.getElementById('rubric-'+skill+'-'+level);
+  if(!rubricEl) return;
+  // Find buttons for this criterion
+  const rows = rubricEl.querySelectorAll('.rubric-row');
+  const critMap = {grammar:0, vocab:1, coherence:2, style:3};
+  const rowIdx = critMap[crit];
+  if(rowIdx===undefined) return;
+  const row = rows[rowIdx];
+  if(!row) return;
+  row.querySelectorAll('.rub-btn').forEach(btn=>{
+    btn.classList.remove('active');
+    if(btn.classList.contains(value.toLowerCase())) btn.classList.add('active');
+  });
+}
+
+function autoCalcWriting(level){
+  const crits = ['grammar','vocab','coherence','style'];
+  const vals = crits.map(c => state.rubrics['w-'+level+'-'+c]);
+  const defined = vals.filter(v=>v);
+  if(defined.length===0) return;
+  const scoreMap = {Weak:0, OK:1, Strong:2};
+  const avg = defined.reduce((s,v)=>s+scoreMap[v],0)/defined.length;
+  let rating = avg<0.5?'Weak': avg<1.5?'OK':'Strong';
+  // Apply to overall but don't override if already set manually
+  setRating('w', level, rating);
+}
+
+// ═══════════════════════════════════════════════
+// SCORING ALGORITHM
+// ═══════════════════════════════════════════════
+function scoreVal(r){ return r==='Strong'?2:r==='OK'?1:r==='Weak'?0:-1; }
+
+function calcSkillLevel(skill){
+  let highestLvl=null, highestRat=null;
+
+  if(skill==='s'){
+    // Groups: A1→A1/A2, B1→B1/B2, C1→C1/C2
+    const groupMap={A1:['A1','A2'], B1:['B1','B2'], C1:['C1','C2']};
+    for(const g of ['A1','B1','C1']){
+      const r = state.ratings['s-'+g];
+      if(!r) continue;
+      const sv=scoreVal(r);
+      let resultLvl;
+      if(sv===2) resultLvl=groupMap[g][1];      // Strong → top of group
+      else if(sv===1) resultLvl=groupMap[g][0]; // OK → bottom of group
+      else resultLvl=g==='A1'?'Pre-A1': groupMap[g][0]; // Weak → prev
+      if(resultLvl!=='Pre-A1'){
+        const ci=LEVELS.indexOf(resultLvl);
+        const hi=highestLvl?LEVELS.indexOf(highestLvl):-1;
+        if(ci>hi){highestLvl=resultLvl;highestRat=r;}
+      } else if(!highestLvl){highestLvl='Pre-A1';highestRat=r;}
+    }
+  } else {
+    for(const lvl of LEVELS){
+      const r=state.ratings[skill+'-'+lvl];
+      if(!r) continue;
+      if(scoreVal(r)>=1){ highestLvl=lvl; highestRat=r; }
+    }
+    // If only Weaks, find the level below first Weak
+    if(!highestLvl){
+      for(const lvl of LEVELS){
+        const r=state.ratings[skill+'-'+lvl];
+        if(r==='Weak'){
+          const idx=LEVELS.indexOf(lvl);
+          highestLvl=idx>0?LEVELS[idx-1]:'Pre-A1';
+          highestRat='Weak';
+          break;
+        }
+      }
+    }
+  }
+  return {level:highestLvl, rating:highestRat};
+}
+
+function calcOverall(results){
+  const valid=Object.values(results).map(r=>r.level).filter(l=>l&&l!=='Pre-A1');
+  if(!valid.length) return 'Pre-A1';
+  const idxs=valid.map(l=>LEVELS.indexOf(l));
+  return LEVELS[Math.round(idxs.reduce((a,b)=>a+b,0)/idxs.length)];
+}
+
+// ═══════════════════════════════════════════════
+// LEVEL DESCRIPTIONS
+// ═══════════════════════════════════════════════
+const LEVEL_NAMES={
+  'Pre-A1':'Poniżej podstawowego',
+  A1:'Podstawowy (Beginner)',
+  A2:'Niższy podstawowy (Elementary)',
+  B1:'Średniozaawansowany (Pre-Intermediate)',
+  B2:'Średniozaawansowany wyższy (Upper-Intermediate)',
+  C1:'Zaawansowany (Advanced)',
+  C2:'Biegły (Proficient / Mastery)'
+};
+
+const LEVEL_DESC_PARENT={
+  'Pre-A1':'Uczeń dopiero zaczyna swoją przygodę z językiem angielskim. Rozumie i powtarza pojedyncze słowa z pomocą lektora.',
+  A1:'Uczeń rozumie proste słowa i krótkie zdania. Potrafi się przedstawić, odpowiedzieć na podstawowe pytania i napisać kilka zdań o sobie.',
+  A2:'Uczeń rozumie krótkie rozmowy i teksty na znane tematy. Potrafi opisać swoje otoczenie, weekend i plany, posługując się zdaniami prostymi.',
+  B1:'Uczeń sprawnie porozumiewa się w codziennych sytuacjach. Opowiada o swoich doświadczeniach, wyraża opinię i radzi sobie z typowymi tematami pisemnie i ustnie.',
+  B2:'Uczeń swobodnie komunikuje się na szeroką gamę tematów. Czyta i rozumie złożone teksty, pisze spójne wypowiedzi i uczestniczy w dyskusjach.',
+  C1:'Uczeń posługuje się językiem płynnie i precyzyjnie. Rozumie złożone teksty i dłuższe wykłady, tworzy dobrze zorganizowane wypowiedzi pisemne i ustne.',
+  C2:'Uczeń posługuje się językiem niemal jak native speaker. Rozumie praktycznie wszystko, wyraża się z subtelnością i elegancją w każdej sytuacji.'
+};
+
+const SKILL_NAMES={l:'Listening 🎧', r:'Reading 📖', w:'Writing ✍️', s:'Speaking 🗣'};
+const SKILL_ICONS={l:'🎧',r:'📖',w:'✍️',s:'🗣'};
+
+const CAN_DO_PARENT={
+  l:{
+    'Pre-A1':'Rozumie bardzo proste słowa po kilkukrotnym powtórzeniu.',
+    A1:'Rozumie proste słowa i wyrażenia, gdy mówi się do niego/niej powoli.',
+    A2:'Rozumie krótkie rozmowy i podstawowe informacje z życia codziennego.',
+    B1:'Rozumie główne myśli jasno sformułowanych wypowiedzi na znane tematy.',
+    B2:'Rozumie dłuższe wypowiedzi i programy, wyszukuje konkretne informacje.',
+    C1:'Rozumie wykłady i złożone wypowiedzi, nadąża za szybkim tempem i akcentami.',
+    C2:'Rozumie praktycznie wszystko — filmy, wykłady, debaty — bez wysiłku.'
+  },
+  r:{
+    'Pre-A1':'Rozumie znane słowa w formie pisanej.',
+    A1:'Rozumie proste zdania, napisy i plakaty.',
+    A2:'Rozumie krótkie, proste teksty z codziennego życia.',
+    B1:'Rozumie teksty z życia codziennego i prywatne listy.',
+    B2:'Rozumie artykuły i raporty o współczesnych problemach.',
+    C1:'Rozumie długie i złożone teksty, w tym artykuły specjalistyczne.',
+    C2:'Rozumie każdy rodzaj tekstu, w tym literaturę i teksty o wysokim stopniu abstrakcji.'
+  },
+  w:{
+    'Pre-A1':'Potrafi zapisać swoje imię i znane słowa.',
+    A1:'Pisze krótkie, proste zdania o sobie.',
+    A2:'Pisze krótkie wiadomości i proste listy.',
+    B1:'Pisze spójne teksty na znane tematy — e-maile, opisy, opowiadania.',
+    B2:'Pisze jasne, szczegółowe teksty na różne tematy — recenzje, opinie, eseje.',
+    C1:'Pisze przejrzyste, szczegółowe teksty o złożonych tematach w różnych stylach.',
+    C2:'Pisze precyzyjnie, elegancko i logicznie w każdym stylu i gatunku.'
+  },
+  s:{
+    'Pre-A1':'Powtarza proste słowa z pomocą lektora.',
+    A1:'Bierze udział w prostej rozmowie, potrzebuje czasu i wsparcia.',
+    A2:'Zadaje i odpowiada na proste pytania, opisuje znane miejsca i ludzi.',
+    B1:'Relacjonuje wydarzenia, wyraża proste opinie, radzi sobie w typowych sytuacjach.',
+    B2:'Prowadzi dyskusje, argumentuje swoje zdanie, mówi płynnie na wiele tematów.',
+    C1:'Mówi spontanicznie i precyzyjnie — nawet o złożonych i abstrakcyjnych kwestiach.',
+    C2:'Posługuje się językiem elastycznie i swobodnie, z subtelnym poczuciem humoru i niuansem.'
+  }
+};
+
+// ═══════════════════════════════════════════════
+// COURSE RECOMMENDATIONS
+// ═══════════════════════════════════════════════
+const ALL_COURSES=[
+  'Savvy Ed (7–11 lat)',
+  "Edward's League (11–14 lat)",
+  'The Bearton Twins (8–14 lat)',
+  'Cambridge YLE Starters / Movers',
+  'Cambridge YLE Flyers',
+  'Cambridge A2 Key (KET)',
+  'Cambridge B1 Preliminary (PET)',
+  'Cambridge B2 First (FCE)',
+  'Cambridge C1 Advanced (CAE)',
+  'Cambridge C2 Proficiency (CPE)',
+  'Tea Talk / Ladies Talk (konwersacje)',
+  'Business English',
+  'Kurs indywidualny'
+];
+
+function getRecommended(level, ageType){
+  const child = ageType==='child';
+  const teen = ageType==='teen';
+  const teen2 = ageType==='teen2';
+  const map={
+    'Pre-A1': child?['Savvy Ed (7–11 lat)',"Edward's League (11–14 lat)",'Kurs indywidualny']:["Edward's League (11–14 lat)",'Kurs indywidualny'],
+    A1: child?['Savvy Ed (7–11 lat)','Cambridge YLE Starters / Movers']:
+        teen?["Edward's League (11–14 lat)",'Cambridge YLE Starters / Movers']:
+        ['Cambridge A2 Key (KET)','Kurs indywidualny'],
+    A2: child?['Cambridge YLE Flyers','The Bearton Twins (8–14 lat)']:
+        teen?["Edward's League (11–14 lat)",'Cambridge A2 Key (KET)','The Bearton Twins (8–14 lat)']:
+        ['Cambridge A2 Key (KET)','Cambridge B1 Preliminary (PET)','Kurs indywidualny'],
+    B1: teen||teen2?['Cambridge B1 Preliminary (PET)','The Bearton Twins (8–14 lat)']:
+        ['Cambridge B1 Preliminary (PET)','Tea Talk / Ladies Talk (konwersacje)','Kurs indywidualny'],
+    B2: ['Cambridge B2 First (FCE)','Business English','Tea Talk / Ladies Talk (konwersacje)'],
+    C1: ['Cambridge C1 Advanced (CAE)','Business English','Tea Talk / Ladies Talk (konwersacje)','Kurs indywidualny'],
+    C2: ['Cambridge C2 Proficiency (CPE)','Business English','Tea Talk / Ladies Talk (konwersacje)','Kurs indywidualny']
+  };
+  return map[level]||['Kurs indywidualny'];
+}
+
+// ═══════════════════════════════════════════════
+// SUMMARY TAB SWITCH
+// ═══════════════════════════════════════════════
+function switchSumTab(tab){
+  document.querySelectorAll('.sum-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.sum-panel').forEach(p=>p.classList.remove('active'));
+  if(tab==='lektor'){
+    document.querySelector('.sum-tab:nth-child(1)').classList.add('active');
+    document.getElementById('sum-lektor').classList.add('active');
+  } else {
+    document.querySelector('.sum-tab:nth-child(2)').classList.add('active');
+    document.getElementById('sum-parent').classList.add('active');
+    buildParentReport();
+  }
+}
+
+// ═══════════════════════════════════════════════
+// CALCULATE & BUILD SUMMARY
+// ═══════════════════════════════════════════════
+function calcAndShow(){
+  const SKILLS=['l','r','w','s'];
+  const results={};
+  SKILLS.forEach(s=>{ results[s]=calcSkillLevel(s); });
+  const overall=calcOverall(results);
+  const ageType=document.getElementById('ageType').value;
+
+  goTo(6);
+
+  // Pokaż baner Notion po chwili
+  setTimeout(()=>{
+    const banner=document.getElementById('notion-banner');
+    if(banner) banner.style.display='block';
+  }, 1200);
+
+  // Meta
+  const fname=document.getElementById('fname').value;
+  const lname=document.getElementById('lname').value;
+  const evalDate=document.getElementById('evalDate').value;
+  const lektor=document.getElementById('lektor').value;
+  const nameStr=[fname,lname].filter(Boolean).join(' ')||'Uczeń';
+  document.getElementById('sum-meta').innerHTML=
+    `${nameStr} &nbsp;<span class="dot"></span>&nbsp; ${evalDate||'—'} &nbsp;<span class="dot"></span>&nbsp; Lektor: ${lektor||'—'}`;
+
+  // Hero
+  document.getElementById('res-overall').textContent=overall;
+  document.getElementById('res-overall-name').textContent=LEVEL_NAMES[overall]||overall;
+
+  // Skills hero grid
+  const grid=document.getElementById('sh-skills-grid');
+  grid.innerHTML='';
+  SKILLS.forEach(s=>{
+    const {level,rating}=results[s];
+    const rClass=rating?rating.toLowerCase():'none';
+    grid.innerHTML+=`<div class="sh-skill">
+      <div class="sh-skill-name">${SKILL_ICONS[s]} ${s==='l'?'Listening':s==='r'?'Reading':s==='w'?'Writing':'Speaking'}</div>
+      <div class="sh-skill-lvl">${level||'—'}</div>
+      <div class="sh-skill-rat ${rClass}">${rating||'—'}</div>
+    </div>`;
+  });
+
+  // Skills table
+  const SKILL_DESCS={
+    l:{A1:'Rozumie proste słowa', A2:'Rozumie krótkie rozmowy', B1:'Rozumie jasne wypowiedzi', B2:'Rozumie dłuższe wypowiedzi', C1:'Rozumie wykłady', C2:'Rozumie praktycznie wszystko'},
+    r:{A1:'Rozumie proste zdania', A2:'Rozumie krótkie teksty', B1:'Rozumie teksty codzienne', B2:'Rozumie artykuły', C1:'Rozumie złożone teksty', C2:'Rozumie każdy tekst'},
+    w:{A1:'Pisze proste zdania', A2:'Pisze krótkie wiadomości', B1:'Pisze e-maile i opisy', B2:'Pisze recenzje i eseje', C1:'Pisze złożone teksty', C2:'Pisze precyzyjnie i elegancko'},
+    s:{A1:'Proste pytania i odpowiedzi', A2:'Opisuje znane miejsca', B1:'Relacjonuje, wyraża opinie', B2:'Dyskutuje, argumentuje', C1:'Mówi płynnie i precyzyjnie', C2:'Posługuje się swobodnie'}
+  };
+  const rows=document.getElementById('tbl-rows');
+  rows.innerHTML='';
+  SKILLS.forEach(s=>{
+    const {level,rating}=results[s];
+    const rClass=rating?rating.toLowerCase():'none';
+    const rLabel=rating?`<span class="rating-pill ${rClass}">${rating}</span>`:'<span class="rating-pill none">—</span>';
+    let comment='';
+    if(s==='s'){
+      for(const g of ['C1','B1','A1']){ const c=state.comments['s-'+g]; if(c){comment=c;break;} }
+    } else {
+      for(const lvl of [...LEVELS].reverse()){ const c=state.comments[s+'-'+lvl]; if(c){comment=c;break;} }
+    }
+    const desc=level&&level!=='Pre-A1'?(SKILL_DESCS[s][level]||''):'Poniżej A1';
+    const skillName=s==='l'?'Listening':s==='r'?'Reading':s==='w'?'Writing':'Speaking';
+    rows.innerHTML+=`<div class="tbl-row">
+      <div class="tbl-skill">${SKILL_ICONS[s]} ${skillName}<small>${desc}</small></div>
+      <div class="tbl-lvl">${level||'—'}</div>
+      <div>${rLabel}</div>
+      <div class="tbl-comment">${comment||'—'}</div>
+    </div>`;
+  });
+
+  // Course chips
+  const recommended=getRecommended(overall, ageType);
+  const chips=document.getElementById('course-chips-lektor');
+  chips.innerHTML='';
+  document.getElementById('course-hint-text').textContent=
+    `Sugestia dla poziomu ${overall} — zaznaczone kursem granatowym to rekomendacje. Kliknij, aby edytować.`;
+  ALL_COURSES.forEach(c=>{
+    const isRec=recommended.includes(c);
+    const chip=document.createElement('div');
+    chip.className='course-chip'+(isRec?' recommended selected':'');
+    chip.textContent=c;
+    chip.onclick=()=>chip.classList.toggle('selected');
+    chips.appendChild(chip);
+  });
+
+  // Notes restore
+  const n=state.notes||{};
+  ['strengths','improve','final'].forEach(f=>{
+    const el=document.getElementById('note-'+f);
+    if(el&&n[f]) el.value=n[f];
+  });
+}
+
+// ═══════════════════════════════════════════════
+// PARENT REPORT
+// ═══════════════════════════════════════════════
+function buildParentReport(){
+  const SKILLS=['l','r','w','s'];
+  const results={};
+  SKILLS.forEach(s=>{ results[s]=calcSkillLevel(s); });
+  const overall=calcOverall(results);
+
+  // Meta
+  const fname=document.getElementById('fname').value;
+  const lname=document.getElementById('lname').value;
+  const evalDate=document.getElementById('evalDate').value;
+  const lektor=document.getElementById('lektor').value;
+  const location=document.getElementById('location').value;
+  const nameStr=[fname,lname].filter(Boolean).join(' ')||'Uczeń';
+
+  document.getElementById('pr-meta-data').innerHTML=`
+    <div class="pr-meta-item"><div class="pr-meta-label">Uczeń</div><div class="pr-meta-value">${nameStr}</div></div>
+    <div class="pr-meta-item"><div class="pr-meta-label">Data</div><div class="pr-meta-value">${evalDate||'—'}</div></div>
+    <div class="pr-meta-item"><div class="pr-meta-label">Lektor</div><div class="pr-meta-value">${lektor||'—'}</div></div>
+    ${location?`<div class="pr-meta-item"><div class="pr-meta-label">Lokalizacja</div><div class="pr-meta-value" style="font-size:12px;">${location}</div></div>`:''}
+  `;
+
+  // Level
+  document.getElementById('pr-level-val').textContent=overall;
+  document.getElementById('pr-level-name').textContent=LEVEL_NAMES[overall]||overall;
+  document.getElementById('pr-level-desc').textContent=LEVEL_DESC_PARENT[overall]||'';
+
+  // Can-do list
+  const canDoList=document.getElementById('pr-can-do-list');
+  canDoList.innerHTML='';
+  SKILLS.forEach(s=>{
+    const {level}=results[s];
+    const lvl=level&&level!=='Pre-A1'?level:'Pre-A1';
+    const canDo=CAN_DO_PARENT[s][lvl]||'—';
+    const skillName=s==='l'?'Słuchanie':s==='r'?'Czytanie':s==='w'?'Pisanie':'Mówienie';
+    canDoList.innerHTML+=`<div class="pr-skill-item">
+      <div class="pr-skill-ico">${SKILL_ICONS[s]}</div>
+      <div class="pr-skill-body">
+        <div class="pr-skill-name">${skillName} <span style="font-size:12px;color:var(--slate);font-weight:400;">— poziom ${lvl}</span></div>
+        <div class="pr-can">${canDo}</div>
+      </div>
+    </div>`;
+  });
+
+  // Notes
+  const n=state.notes||{};
+  const strengths=n.strengths||(document.getElementById('note-strengths')?document.getElementById('note-strengths').value:'');
+  const improve=n.improve||(document.getElementById('note-improve')?document.getElementById('note-improve').value:'');
+  const final=n.final||(document.getElementById('note-final')?document.getElementById('note-final').value:'');
+
+  document.getElementById('pr-strengths-box').textContent=strengths||'—';
+  document.getElementById('pr-improve-box').textContent=improve||'—';
+  document.getElementById('pr-final-box').textContent=final||'—';
+
+  // Courses — only selected ones
+  const selectedChips=document.querySelectorAll('#course-chips-lektor .course-chip.selected');
+  const coursesList=document.getElementById('pr-courses-list');
+  coursesList.innerHTML='';
+  if(selectedChips.length){
+    selectedChips.forEach(chip=>{
+      const tag=document.createElement('div');
+      tag.className='pr-course-tag';
+      tag.textContent=chip.textContent;
+      coursesList.appendChild(tag);
+    });
+  } else {
+    // Fall back to recommended
+    const ageType=document.getElementById('ageType').value;
+    getRecommended(overall,ageType).forEach(c=>{
+      const tag=document.createElement('div');
+      tag.className='pr-course-tag';
+      tag.textContent=c;
+      coursesList.appendChild(tag);
+    });
+  }
+}
+
+
+// ═══════════════════════════════════════════════
+// SPEAKING — TIMERS
+// ═══════════════════════════════════════════════
+const spkTimers={};
+
+function toggleSpeakingTimer(group, totalSecs){
+  if(spkTimers[group] && spkTimers[group].running){
+    clearInterval(spkTimers[group].interval);
+    spkTimers[group].running=false;
+    document.getElementById('spk-tbtn-'+group).textContent='▶';
+    document.getElementById('spk-tbtn-'+group).classList.remove('running');
+  } else {
+    if(!spkTimers[group]) spkTimers[group]={remaining:totalSecs, running:false, interval:null};
+    if(spkTimers[group].remaining<=0) spkTimers[group].remaining=totalSecs;
+    spkTimers[group].running=true;
+    document.getElementById('spk-tbtn-'+group).textContent='⏸';
+    document.getElementById('spk-tbtn-'+group).classList.add('running');
+    spkTimers[group].interval=setInterval(()=>{
+      spkTimers[group].remaining--;
+      const r=spkTimers[group].remaining;
+      const disp=document.getElementById('spk-timer-'+group);
+      disp.textContent=pad(Math.floor(r/60))+':'+pad(r%60);
+      disp.className='spk-timer-display'+(r<=0?' done':r<=60?' warn':' running');
+      if(r<=0){
+        clearInterval(spkTimers[group].interval);
+        spkTimers[group].running=false;
+        document.getElementById('spk-tbtn-'+group).textContent='↺';
+        document.getElementById('spk-tbtn-'+group).classList.remove('running');
+        // Reset on next click
+        spkTimers[group].remaining=0;
+      }
+    },1000);
+  }
+}
+
+// ═══════════════════════════════════════════════
+// SPEAKING — BACKUP QUESTIONS & HINTS
+// ═══════════════════════════════════════════════
+function showBackup(group){
+  document.getElementById('backup-s-'+group).classList.add('show');
+  document.getElementById('more-btn-'+group).classList.add('hidden');
+}
+
+function toggleHint(id){
+  const el=document.getElementById(id);
+  if(el) el.classList.toggle('show');
+}
+
+// ═══════════════════════════════════════════════
+// VALIDATION
+// ═══════════════════════════════════════════════
+function getSkillRatedStatus(){
+  const SKILLS=['l','r','w','s'];
+  const status={};
+  SKILLS.forEach(s=>{
+    if(s==='s'){
+      status[s]=['A1','B1','C1'].some(g=>state.ratings['s-'+g]);
+    } else {
+      status[s]=LEVELS.some(lvl=>state.ratings[s+'-'+lvl]);
+    }
+  });
+  return status;
+}
+
+function validateAndCalc(){
+  const status=getSkillRatedStatus();
+  const ratedCount=Object.values(status).filter(Boolean).length;
+  const speakingRated=status['s'];
+
+  if(ratedCount<2||!speakingRated){
+    const list=document.getElementById('modal-skill-list');
+    const names={l:'🎧 Listening',r:'📖 Reading',w:'✍️ Writing',s:'🗣 Speaking (wymagane)'};
+    list.innerHTML='';
+    Object.entries(names).forEach(([skill,name])=>{
+      const done=status[skill];
+      const item=document.createElement('div');
+      item.className='modal-skill-item '+(done?'done':'missing');
+      item.innerHTML=(done?'✓ ':'✗ ')+name;
+      list.appendChild(item);
+    });
+    document.getElementById('validation-modal').classList.remove('hidden');
+  } else {
+    calcAndShow();
+  }
+}
+
+function closeValidationModal(){
+  document.getElementById('validation-modal').classList.add('hidden');
+}
+
+function forceCalcAndShow(){
+  closeValidationModal();
+  calcAndShow();
+}
+
+// ═══════════════════════════════════════════════
+// AI REPORT GENERATION
+// ═══════════════════════════════════════════════
+async function generateAIReport(){
+  const btn=document.getElementById('ai-gen-btn');
+  const loading=document.getElementById('ai-loading');
+  const result=document.getElementById('ai-result');
+
+  btn.disabled=true;
+  loading.classList.add('show');
+  result.classList.remove('show');
+
+  const SKILLS=['l','r','w','s'];
+  const skillResults={};
+  SKILLS.forEach(s=>{ skillResults[s]=calcSkillLevel(s); });
+  const overall=calcOverall(skillResults);
+
+  const fname=document.getElementById('fname').value||'uczeń';
+  const lname=document.getElementById('lname').value||'';
+  const ageType=document.getElementById('ageType').value;
+  const lektor=document.getElementById('lektor').value||'lektor';
+
+  const skillLabels={l:'Listening (słuchanie)',r:'Reading (czytanie)',w:'Writing (pisanie)',s:'Speaking (mówienie)'};
+  const ageLabels={child:'dziecko (7-11 lat)',teen:'nastolatek (11-14 lat)',teen2:'nastolatek (14-18 lat)',adult:'dorosły'};
+
+  let skillSummary='';
+  SKILLS.forEach(s=>{
+    const {level,rating}=skillResults[s];
+    const comment=s==='s'
+      ?(['C1','B1','A1'].map(g=>state.comments['s-'+g]).filter(Boolean)[0]||'')
+      :([...LEVELS].reverse().map(lvl=>state.comments[s+'-'+lvl]).filter(Boolean)[0]||'');
+    skillSummary+=`- ${skillLabels[s]}: poziom ${level||'nieoceniony'}${comment?' — komentarz lektora: "'+comment+'"':''}\n`;
+  });
+
+  const strengths=document.getElementById('note-strengths').value||state.notes.strengths||'';
+  const improve=document.getElementById('note-improve').value||state.notes.improve||'';
+  const final=document.getElementById('note-final').value||state.notes.final||'';
+
+  const prompt=`Jesteś doświadczonym metodykiem w Prestige Lingua — szkole językowej premium w Gdańsku (Trójmiasto). Szkoła pracuje metodologią Communication First i prowadzi kursy Cambridge.
+
+Napisz spersonalizowany raport ewaluacyjny PO POLSKU dla rodzica lub ucznia na podstawie danych poniżej.
+
+DANE UCZNIA:
+- Imię: ${fname} ${lname}
+- Typ: ${ageLabels[ageType]||'nieznany'}
+- Ogólny poziom CEFR: ${overall} (${LEVEL_NAMES[overall]||''})
+${skillSummary}${strengths?'- Mocne strony (notatka lektora): '+strengths+'\n':''}${improve?'- Obszary do rozwoju (notatka): '+improve+'\n':''}${final?'- Komentarz lektora: '+final+'\n':''}
+
+ZASADY PISANIA:
+1. Napisz 3–4 akapity, ciepłe i zachęcające, jak dobry nauczyciel do rodzica
+2. Użyj języka "może", "potrafi", "radzi sobie" — NIGDY "Weak/Strong/OK/CEFR" bezpośrednio do rodzica
+3. Zacznij od zwrotu "Drogi Rodzicu," lub "Droga ${fname}," (jeśli dorosły)
+4. Akapit 1: ogólne podsumowanie poziomu i postępów
+5. Akapit 2: konkretne mocne strony i co uczeń potrafi zrobić w języku angielskim
+6. Akapit 3: co warto dalej ćwiczyć i jak szkoła może pomóc
+7. Akapit 4: ciepłe zakończenie z zachętą do kontynuowania nauki
+8. NIE używaj słów: innowacyjny, rewolucyjny, pasja, misja, oferujemy, wyjątkowy
+9. Podpisz: "${lektor}, Prestige Lingua"
+10. Wyłącznie czysty tekst — bez nagłówków, bez gwiazdek, bez cudzysłowów`;
+
+  try {
+    const response=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:1000,
+        messages:[{role:'user',content:prompt}]
+      })
+    });
+    const data=await response.json();
+    const text=data.content&&data.content[0]&&data.content[0].text
+      ? data.content[0].text
+      : 'Nie udało się wygenerować raportu. Sprawdź połączenie internetowe.';
+
+    document.getElementById('ai-result-text').textContent=text;
+    result.classList.add('show');
+  } catch(e){
+    document.getElementById('ai-result-text').textContent=
+      'Błąd połączenia z API. Upewnij się, że masz dostęp do internetu i spróbuj ponownie.';
+    result.classList.add('show');
+  } finally {
+    loading.classList.remove('show');
+    btn.disabled=false;
+  }
+}
+
+async function copyAIReport(){
+  const text=document.getElementById('ai-result-text').textContent;
+  try{
+    await navigator.clipboard.writeText(text);
+    const btn=document.querySelector('.ai-copy-btn');
+    const orig=btn.textContent;
+    btn.textContent='✓ Skopiowano!';
+    setTimeout(()=>btn.textContent=orig,2000);
+  } catch(e){
+    const ta=document.createElement('textarea');
+    ta.value=text; document.body.appendChild(ta);
+    ta.select(); document.execCommand('copy');
+    document.body.removeChild(ta);
+  }
+}
+
+// ═══════════════════════════════════════════════
+// PDF EXPORT
+// ═══════════════════════════════════════════════
+function exportPDF(){
+  // Switch to parent view for printing
+  switchSumTab('parent');
+  buildParentReport();
+  // Set print date on footer
+  const footer=document.getElementById('pr-footer-el');
+  if(footer) footer.setAttribute('data-date',new Date().toLocaleDateString('pl-PL'));
+  setTimeout(()=>window.print(),300);
+}
+// ═══════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded',()=>{
+  const hadData=loadState();
+  if(hadData){
+    applyLoadedState();
+    const banner=document.getElementById('session-banner');
+    const nameStr=[state.student.fname,state.student.lname].filter(Boolean).join(' ');
+    document.getElementById('session-banner-text').textContent=
+      nameStr?`Wczytano sesję: ${nameStr}.`:'Wczytano poprzednią sesję.';
+    banner.classList.remove('hidden');
+  }
+  // Default date
+  if(!document.getElementById('evalDate').value){
+    document.getElementById('evalDate').valueAsDate=new Date();
+    state.student.evalDate=document.getElementById('evalDate').value;
+  }
+});
+</script>
+</body>
+</html>
