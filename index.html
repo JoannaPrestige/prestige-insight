@@ -1612,6 +1612,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--navy);
   <div class="nav-btns">
     <button class="btn btn-ghost" onclick="goTo(5)">← Speaking</button>
     <div style="display:flex;gap:10px;">
+      <button class="btn btn-ghost" onclick="exportSessionJSON()">💾 Eksport JSON</button>
       <button class="btn btn-ghost" onclick="exportPDF()">📄 Zapisz PDF</button>
       <button class="btn btn-gold" onclick="validateAndCalc()">↻ Przelicz</button>
     </div>
@@ -2495,6 +2496,20 @@ function getSkillRatedStatus(){
 }
 
 function validateAndCalc(){
+  const missing=[];
+  if(!document.getElementById('fname').value.trim()) missing.push('Imię ucznia');
+  if(!document.getElementById('lname').value.trim()) missing.push('Nazwisko ucznia');
+  if(!document.getElementById('evalDate').value) missing.push('Data ewaluacji');
+  if(!document.getElementById('lektor').value.trim()) missing.push('Lektor');
+  if(!document.getElementById('ageType').value) missing.push('Wiek / typ ucznia');
+
+  if(missing.length){
+    if(!confirm('Brakuje danych: '+missing.join(', ')+'.\n\nWygenerować raport mimo to?')){
+      goTo(0);
+      return;
+    }
+  }
+
   const status=getSkillRatedStatus();
   const ratedCount=Object.values(status).filter(Boolean).length;
   const speakingRated=status['s'];
@@ -2626,6 +2641,60 @@ async function copyAIReport(){
     ta.select(); document.execCommand('copy');
     document.body.removeChild(ta);
   }
+}
+
+// ═══════════════════════════════════════════════
+// EXPORT SESJI DO JSON (do Notion/Make/archiwum)
+// ═══════════════════════════════════════════════
+function exportSessionJSON(){
+  const SKILLS=['l','r','w','s'];
+  const skillResults={};
+  SKILLS.forEach(s=>{ skillResults[s]=calcSkillLevel(s); });
+  const overall=calcOverall(skillResults);
+
+  const fname=document.getElementById('fname').value||'';
+  const lname=document.getElementById('lname').value||'';
+  const evalDate=document.getElementById('evalDate').value||'';
+  const lektor=document.getElementById('lektor').value||'';
+  const ageType=document.getElementById('ageType').value||'';
+  const location=document.getElementById('location').value||'';
+
+  const selectedCourses=[...document.querySelectorAll('#course-chips-lektor .course-chip.selected')]
+    .map(c=>c.textContent);
+
+  const sessionData={
+    meta:{
+      student:{firstName:fname,lastName:lname,ageType:ageType},
+      evaluation:{date:evalDate,lektor:lektor,location:location},
+      exportedAt:new Date().toISOString()
+    },
+    result:{
+      overallLevel:overall,
+      overallLevelName:LEVEL_NAMES[overall]||'',
+      skills:{
+        listening:{level:skillResults.l.level,rating:skillResults.l.rating},
+        reading:{level:skillResults.r.level,rating:skillResults.r.rating},
+        writing:{level:skillResults.w.level,rating:skillResults.w.rating},
+        speaking:{level:skillResults.s.level,rating:skillResults.s.rating}
+      },
+      recommendedCourses:selectedCourses
+    },
+    intake:state.intake||{},
+    notes:state.notes||{},
+    rawRatings:state.ratings||{},
+    rawComments:state.comments||{},
+    rawRubrics:state.rubrics||{}
+  };
+
+  const safeName=(fname+'_'+lname).replace(/[^a-zA-Z0-9_\-]/g,'_')||'sesja';
+  const dateStr=(evalDate||new Date().toISOString().slice(0,10));
+  const filename='prestige_insight_'+safeName+'_'+dateStr+'.json';
+
+  const blob=new Blob([JSON.stringify(sessionData,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url; a.download=filename; a.click();
+  URL.revokeObjectURL(url);
 }
 
 // ═══════════════════════════════════════════════
