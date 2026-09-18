@@ -1,0 +1,7 @@
+W tym folderze lezy EWALUATOR SENIOR (mlodziez od 13 lat i dorosli).
+
+Plik index.html z tego folderu idzie WYLACZNIE do repozytorium:
+      prestige-insight
+
+Rozmiar pliku: 855 310 bajtow (0,8 MB).
+Jesli plik ma 2,4 MB — to jest kompendium, czyli nie ten folder.
