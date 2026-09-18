@@ -711,7 +711,9 @@ body{background:var(--e-bg);color:var(--e-ink);
 .btn-primary:hover{filter:brightness(1.08)}
 .btn-ghost{background:var(--e-surface);color:var(--e-ink-2);border-color:var(--e-line)}
 .btn-ghost:hover{background:var(--e-surface-2);color:var(--e-ink)}
-.btn-gold{background:var(--e-gold);color:#fff;border-color:var(--e-gold)}
+.btn-gold{background:var(--e-gold);color:var(--e-ink,#1C1C1E);border-color:var(--e-gold)}
+/* Ciemny tekst na złocie, tak jak w oryginalnym arkuszu. Biały dawał 3,43:1,
+   czyli poniżej progu czytelności. Naprawione 17.09.2026. */
 .btn-teal{background:var(--e-teal);color:#fff;border-color:var(--e-teal)}
 
 /* ── ELEMENTY WYBORU: większe cele, czytelny stan ──────── */
@@ -769,7 +771,10 @@ body{background:var(--e-bg);color:var(--e-ink);
 .modal-box{background:var(--e-surface);border-radius:18px;box-shadow:var(--sh-lg);border:1px solid var(--e-line)}
 .result-hero,.summary-hero,.pr-level-banner{
   background:var(--e-tint);border:1px solid var(--e-tint-2);border-radius:16px;color:var(--e-ink)}
-.result-course,.pr-level-name{font-family:'Playfair Display',Georgia,serif;color:var(--e-brand)}
+.result-course,.pr-level-name{font-family:'Playfair Display',Georgia,serif}
+/* .result-course NIE dostaje koloru marki: leży na kafelku w kolorze marki,
+   więc nadpisanie bieli robiło z nazwy kursu tekst niewidoczny. Naprawione 17.09.2026. */
+.pr-level-name{color:var(--e-brand)}
 
 /* ── MOBILE ────────────────────────────────────────────── */
 @media (max-width:760px){
@@ -956,11 +961,19 @@ body{background:var(--e-bg);color:var(--e-ink);
         <label class="form-label">Lokalizacja</label>
         <select class="form-input" id="location" onchange="saveField('location',this.value)">
           <option value="">Wybierz...</option>
-          <option>Gdańsk Wrzeszcz, ul. Wajdeloty</option>
+          <option>Gdańsk Wrzeszcz, ul. Grażyny 10</option>
           <option>Gdańsk Południe – Jasień / Lawendowe Wzgórze</option>
           <option>Straszyn, ul. Leśna 2</option>
           <option>Online</option>
         </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Telefon</label>
+        <input class="form-input" id="telefon" type="tel" placeholder="np. 600 100 200" oninput="saveField('telefon',this.value)">
+      </div>
+      <div class="form-group">
+        <label class="form-label">E-mail</label>
+        <input class="form-input" id="email" type="email" placeholder="np. kursant@poczta.pl" oninput="saveField('email',this.value)">
       </div>
     </div>
   </div>
@@ -2031,6 +2044,19 @@ body{background:var(--e-bg);color:var(--e-ink);
           <div class="form-label">📈 Obszary do rozwoju</div>
           <textarea class="notes-ta" id="note-improve" placeholder="np. gramatyka przeszła, pisownia, słuchanie szybszych wypowiedzi..." oninput="saveNote('improve',this.value)"></textarea>
         </div>
+        <div class="form-group">
+          <div class="form-label">👥 Sugerowana grupa</div>
+          <input class="form-input" id="note-grupa" placeholder="np. General B1 — poniedziałek i środa 18:30, Wrzeszcz" oninput="saveNote('grupa',this.value)">
+        </div>
+        <div class="form-group">
+          <div class="form-label">📌 Status</div>
+          <select class="form-input" id="note-status" onchange="saveNote('status',this.value)">
+            <option value="">— nie ustawiono —</option>
+          <option>Zapisany</option>
+          <option>Do oddzwonienia</option>
+          <option>Zrezygnował</option>
+          </select>
+        </div>
         <div class="form-group full">
           <div class="form-label">💬 Komentarz końcowy (dla rodzica)</div>
           <textarea class="notes-ta" id="note-final" placeholder="np. Uczeń wykazuje duże zaangażowanie i szybko przyswaja nowe struktury..." style="min-height:72px;" oninput="saveNote('final',this.value)"></textarea>
@@ -2075,39 +2101,30 @@ body{background:var(--e-bg);color:var(--e-ink);
       </div>
       <div class="pr-footer" id="pr-footer-el">
         <strong>Prestige Lingua – Szkoła Językowa Premium</strong><br>
-        Gdańsk Wrzeszcz, ul. Wajdeloty | Gdańsk Jasień, Lawendowe Wzgórze 24 | Straszyn, ul. Leśna 2<br>
+        Gdańsk Wrzeszcz, ul. Grażyny 10 | Gdańsk Jasień, Lawendowe Wzgórze 24 | Straszyn, ul. Leśna 2<br>
         <a href="https://www.prestigelingua.pl">www.prestigelingua.pl</a>
       </div>
     </div>
 
-    <!-- AI REPORT GENERATOR -->
-    <div class="ai-section" style="margin-top:20px;">
-      <div class="card">
-        <div class="card-title" style="font-size:17px;">✨ Spersonalizowany raport AI</div>
-        <p style="font-size:13px;color:var(--slate);margin-bottom:14px;line-height:1.55;">
-          Wygeneruj unikalny, ciepły raport dla rodzica/ucznia — Claude przeanalizuje wszystkie oceny
-          i komentarze lektora, i napisze spersonalizowany tekst po polsku.
-        </p>
-        <button class="ai-generate-btn" id="ai-gen-btn" onclick="generateAIReport()">
-          ✨ Generuj spersonalizowany raport AI
-        </button>
-        <div class="ai-loading" id="ai-loading">
-          <div class="ai-spinner"></div>
-          <div style="font-size:13px;">Claude analizuje oceny i komentarze lektora...</div>
-        </div>
-        <div class="ai-result" id="ai-result">
-          <div style="font-size:11px;font-weight:600;color:var(--gold);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">✨ Wygenerowany raport dla rodzica</div>
-          <div class="ai-result-text" id="ai-result-text"></div>
-          <div class="ai-result-actions">
-            <button class="ai-action-btn ai-copy-btn" onclick="copyAIReport()">📋 Kopiuj tekst</button>
-            <button class="ai-action-btn ai-regen-btn" onclick="generateAIReport()">↻ Generuj ponownie</button>
-          </div>
-          <div class="ai-hint">💡 Skopiuj tekst do pola "Słowo od lektora" powyżej, aby pojawił się w drukowanym raporcie.</div>
-        </div>
-      </div>
-    </div>
   </div>
 
+
+  <div style="border:1px solid var(--border,#dde3ee);border-radius:12px;padding:16px 18px;margin-top:14px;background:var(--white,#fff);">
+    <div style="font-size:11px;font-weight:700;color:var(--muted,#5A6172);text-transform:uppercase;letter-spacing:.9px;margin-bottom:6px;">📊 Rejestr ewaluacji — Excel</div>
+    <div style="font-size:13px;color:var(--muted,#5A6172);line-height:1.55;margin-bottom:12px;">
+      Dopisz zakończoną ewaluację do rejestru, a potem pobierz cały rejestr jako zwykły arkusz Excela (.xlsx).
+      Rejestr trzyma się w tej przeglądarce, na tym komputerze — pobrany plik możesz zapisać gdziekolwiek.
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+      <button class="btn btn-primary" onclick="PLRejestr.dopisz()">💾 Dopisz do rejestru</button>
+      <button class="btn btn-ghost" onclick="PLRejestr.pobierz()" data-rejestr-licznik>📊 Pobierz Excel</button>
+      <button class="btn btn-ghost" onclick="PLRejestr.wyczysc()" style="margin-left:auto;opacity:.7;font-size:12px;">🗑 Wyczyść rejestr</button>
+    </div>
+    <div data-arkusz-wiersz style="display:none;margin-top:12px;padding-top:12px;border-top:1px solid var(--border,#dde3ee);align-items:center;gap:10px;flex-wrap:wrap;">
+      <span data-arkusz-status style="font-size:12.5px;color:var(--muted,#5A6172);"></span>
+      <button class="btn btn-ghost" onclick="PLRejestr.wyslijZalegle()" style="margin-left:auto;font-size:12px;">☁️ Wyślij zaległe</button>
+    </div>
+  </div>
   <div class="nav-btns">
     <button class="btn btn-ghost" onclick="goTo(5)">← Speaking</button>
     <div style="display:flex;gap:10px;">
@@ -2118,14 +2135,6 @@ body{background:var(--e-bg);color:var(--e-ink);
 </section>
 
 </main>
-
-<!-- NOTION BANNER -->
-<div id="notion-banner" style="display:none;position:fixed;bottom:20px;right:20px;z-index:300;background:var(--white);border:1.5px solid var(--border);border-radius:12px;padding:14px 18px;box-shadow:var(--sh-lg);max-width:280px;">
-  <div style="font-size:11px;font-weight:600;color:var(--slate);text-transform:uppercase;letter-spacing:.9px;margin-bottom:6px;">📒 Ewaluator Senior — baza sesji</div>
-  <div style="font-size:13px;color:var(--navy);margin-bottom:10px;line-height:1.5;">Ewaluacja gotowa — zapisz wyniki w Notion.</div>
-  <a href="https://www.notion.so/33cd58a85f768110b020cbc3aa8166ed" target="_blank" style="display:block;background:var(--navy);color:#fff;text-decoration:none;padding:8px 14px;border-radius:7px;font-size:13px;font-weight:600;text-align:center;">Otwórz bazę →</a>
-  <button onclick="document.getElementById('notion-banner').style.display='none'" style="position:absolute;top:8px;right:10px;background:none;border:none;color:var(--slate-light);cursor:pointer;font-size:18px;line-height:1;">×</button>
-</div>
 
 <!-- VALIDATION MODAL -->
 <div class="modal-overlay hidden" id="validation-modal">
@@ -2182,7 +2191,7 @@ function newSession(){
 function applyLoadedState(){
   // Student fields
   const sf = state.student||{};
-  ['fname','lname','evalDate','lektor','ageType','location'].forEach(f=>{
+  ['fname','lname','evalDate','lektor','ageType','location','telefon','email'].forEach(f=>{
     const el = document.getElementById(f);
     if(el && sf[f]) el.value = sf[f];
   });
@@ -2202,7 +2211,7 @@ function applyLoadedState(){
   });
   // Notes
   const n = state.notes||{};
-  ['strengths','improve','final'].forEach(f=>{
+  ['strengths','improve','final','grupa','status'].forEach(f=>{
     const el = document.getElementById('note-'+f);
     if(el && n[f]) el.value = n[f];
   });
@@ -2740,12 +2749,6 @@ function calcAndShow(){
 
   goTo(6);
 
-  // Pokaż baner Notion po chwili
-  setTimeout(()=>{
-    const banner=document.getElementById('notion-banner');
-    if(banner) banner.style.display='block';
-  }, 1200);
-
   // Meta
   const fname=document.getElementById('fname').value;
   const lname=document.getElementById('lname').value;
@@ -2820,7 +2823,7 @@ function calcAndShow(){
 
   // Notes restore
   const n=state.notes||{};
-  ['strengths','improve','final'].forEach(f=>{
+  ['strengths','improve','final','grupa','status'].forEach(f=>{
     const el=document.getElementById('note-'+f);
     if(el&&n[f]) el.value=n[f];
   });
@@ -2999,109 +3002,6 @@ function closeValidationModal(){
 function forceCalcAndShow(){
   closeValidationModal();
   calcAndShow();
-}
-
-// ═══════════════════════════════════════════════
-// AI REPORT GENERATION
-// ═══════════════════════════════════════════════
-async function generateAIReport(){
-  const btn=document.getElementById('ai-gen-btn');
-  const loading=document.getElementById('ai-loading');
-  const result=document.getElementById('ai-result');
-
-  btn.disabled=true;
-  loading.classList.add('show');
-  result.classList.remove('show');
-
-  const SKILLS=['l','r','w','s'];
-  const skillResults={};
-  SKILLS.forEach(s=>{ skillResults[s]=calcSkillLevel(s); });
-  const overall=calcOverall(skillResults);
-
-  const fname=document.getElementById('fname').value||'uczeń';
-  const lname=document.getElementById('lname').value||'';
-  const ageType=document.getElementById('ageType').value;
-  const lektor=document.getElementById('lektor').value||'lektor';
-
-  const skillLabels={l:'Listening (słuchanie)',r:'Reading (czytanie)',w:'Writing (pisanie)',s:'Speaking (mówienie)'};
-  const ageLabels={child:'dziecko (7-11 lat)',teen:'nastolatek (11-14 lat)',teen2:'nastolatek (14-18 lat)',adult:'dorosły'};
-
-  let skillSummary='';
-  SKILLS.forEach(s=>{
-    const {level,rating}=skillResults[s];
-    const comment=s==='s'
-      ?(['C1','B1','A1'].map(g=>state.comments['s-'+g]).filter(Boolean)[0]||'')
-      :([...LEVELS].reverse().map(lvl=>state.comments[s+'-'+lvl]).filter(Boolean)[0]||'');
-    skillSummary+=`- ${skillLabels[s]}: poziom ${level||'nieoceniony'}${comment?' — komentarz lektora: "'+comment+'"':''}\n`;
-  });
-
-  const strengths=document.getElementById('note-strengths').value||state.notes.strengths||'';
-  const improve=document.getElementById('note-improve').value||state.notes.improve||'';
-  const final=document.getElementById('note-final').value||state.notes.final||'';
-
-  const prompt=`Jesteś doświadczonym metodykiem w Prestige Lingua — szkole językowej premium w Gdańsku (Trójmiasto). Szkoła pracuje metodologią Communication First i prowadzi kursy Cambridge.
-
-Napisz spersonalizowany raport ewaluacyjny PO POLSKU dla rodzica lub ucznia na podstawie danych poniżej.
-
-DANE UCZNIA:
-- Imię: ${fname} ${lname}
-- Typ: ${ageLabels[ageType]||'nieznany'}
-- Ogólny poziom CEFR: ${overall} (${LEVEL_NAMES[overall]||''})
-${skillSummary}${strengths?'- Mocne strony (notatka lektora): '+strengths+'\n':''}${improve?'- Obszary do rozwoju (notatka): '+improve+'\n':''}${final?'- Komentarz lektora: '+final+'\n':''}
-
-ZASADY PISANIA:
-1. Napisz 3–4 akapity, ciepłe i zachęcające, jak dobry nauczyciel do rodzica
-2. Użyj języka "może", "potrafi", "radzi sobie" — NIGDY "Weak/Strong/OK/CEFR" bezpośrednio do rodzica
-3. Zacznij od zwrotu "Drogi Rodzicu," lub "Droga ${fname}," (jeśli dorosły)
-4. Akapit 1: ogólne podsumowanie poziomu i postępów
-5. Akapit 2: konkretne mocne strony i co uczeń potrafi zrobić w języku angielskim
-6. Akapit 3: co warto dalej ćwiczyć i jak szkoła może pomóc
-7. Akapit 4: ciepłe zakończenie z zachętą do kontynuowania nauki
-8. NIE używaj słów: innowacyjny, rewolucyjny, pasja, misja, oferujemy, wyjątkowy
-9. Podpisz: "${lektor}, Prestige Lingua"
-10. Wyłącznie czysty tekst — bez nagłówków, bez gwiazdek, bez cudzysłowów`;
-
-  try {
-    const response=await fetch('https://api.anthropic.com/v1/messages',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({
-        model:'claude-sonnet-4-20250514',
-        max_tokens:1000,
-        messages:[{role:'user',content:prompt}]
-      })
-    });
-    const data=await response.json();
-    const text=data.content&&data.content[0]&&data.content[0].text
-      ? data.content[0].text
-      : 'Nie udało się wygenerować raportu. Sprawdź połączenie internetowe.';
-
-    document.getElementById('ai-result-text').textContent=text;
-    result.classList.add('show');
-  } catch(e){
-    document.getElementById('ai-result-text').textContent=
-      'Błąd połączenia z API. Upewnij się, że masz dostęp do internetu i spróbuj ponownie.';
-    result.classList.add('show');
-  } finally {
-    loading.classList.remove('show');
-    btn.disabled=false;
-  }
-}
-
-async function copyAIReport(){
-  const text=document.getElementById('ai-result-text').textContent;
-  try{
-    await navigator.clipboard.writeText(text);
-    const btn=document.querySelector('.ai-copy-btn');
-    const orig=btn.textContent;
-    btn.textContent='✓ Skopiowano!';
-    setTimeout(()=>btn.textContent=orig,2000);
-  } catch(e){
-    const ta=document.createElement('textarea');
-    ta.value=text; document.body.appendChild(ta);
-    ta.select(); document.execCommand('copy');
-    document.body.removeChild(ta);
-  }
 }
 
 // ═══════════════════════════════════════════════
@@ -3419,6 +3319,294 @@ document.addEventListener('DOMContentLoaded',()=>{
   else window.addEventListener('load', function(){ setTimeout(start, 0); });
 })();
 
+</script>
+
+<script>
+/* ══ REJESTR EWALUACJI → ARKUSZ EXCELA (.xlsx) ══════════════════════
+   Zastępuje ręczne przepisywanie wyników do zewnętrznej bazy.
+   Zakończona ewaluacja
+   dopisuje się do rejestru w przeglądarce, a rejestr pobiera się
+   jako zwykły plik Excela. Bez internetu, bez kont, bez dodatków.
+   Dodane 16.09.2026. */
+(function(){
+'use strict';
+
+/* ── 1. ZIP metodą STORE + CRC32. Plik .xlsx to spakowany zestaw XML-i ── */
+var TAB=(function(){var t=new Uint32Array(256),c,n,k;for(n=0;n<256;n++){c=n;for(k=0;k<8;k++)c=(c&1)?(0xEDB88320^(c>>>1)):(c>>>1);t[n]=c>>>0;}return t;})();
+function crc32(b){var c=0xFFFFFFFF,i;for(i=0;i<b.length;i++)c=TAB[(c^b[i])&255]^(c>>>8);return (c^0xFFFFFFFF)>>>0;}
+function bajty(s){return new TextEncoder().encode(s);}
+
+function zip(pliki){
+  var lokalne=[],centralne=[],offset=0;
+  pliki.forEach(function(p){
+    var nazwa=bajty(p.nazwa),dane=bajty(p.tresc),crc=crc32(dane);
+    var lh=new DataView(new ArrayBuffer(30));
+    lh.setUint32(0,0x04034b50,true);lh.setUint16(4,20,true);lh.setUint16(6,0x0800,true);
+    lh.setUint16(8,0,true);lh.setUint16(10,0,true);lh.setUint16(12,0,true);
+    lh.setUint32(14,crc,true);lh.setUint32(18,dane.length,true);lh.setUint32(22,dane.length,true);
+    lh.setUint16(26,nazwa.length,true);lh.setUint16(28,0,true);
+    lokalne.push(new Uint8Array(lh.buffer),nazwa,dane);
+    var ch=new DataView(new ArrayBuffer(46));
+    ch.setUint32(0,0x02014b50,true);ch.setUint16(4,20,true);ch.setUint16(6,20,true);
+    ch.setUint16(8,0x0800,true);ch.setUint16(10,0,true);ch.setUint16(12,0,true);ch.setUint16(14,0,true);
+    ch.setUint32(16,crc,true);ch.setUint32(20,dane.length,true);ch.setUint32(24,dane.length,true);
+    ch.setUint16(28,nazwa.length,true);ch.setUint16(30,0,true);ch.setUint16(32,0,true);
+    ch.setUint16(34,0,true);ch.setUint16(36,0,true);ch.setUint32(38,0,true);ch.setUint32(42,offset,true);
+    centralne.push(new Uint8Array(ch.buffer),nazwa);
+    offset+=30+nazwa.length+dane.length;
+  });
+  var rozmiarCD=0;centralne.forEach(function(c){rozmiarCD+=c.length;});
+  var eo=new DataView(new ArrayBuffer(22));
+  eo.setUint32(0,0x06054b50,true);eo.setUint16(4,0,true);eo.setUint16(6,0,true);
+  eo.setUint16(8,pliki.length,true);eo.setUint16(10,pliki.length,true);
+  eo.setUint32(12,rozmiarCD,true);eo.setUint32(16,offset,true);eo.setUint16(20,0,true);
+  var czesci=lokalne.concat(centralne,[new Uint8Array(eo.buffer)]);
+  var razem=0;czesci.forEach(function(c){razem+=c.length;});
+  var out=new Uint8Array(razem),poz=0;
+  czesci.forEach(function(c){out.set(c,poz);poz+=c.length;});
+  return out;
+}
+
+/* ── 2. Budowa arkusza ── */
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function kol(n){var s='';n++;while(n>0){var r=(n-1)%26;s=String.fromCharCode(65+r)+s;n=(n-r-1)/26;}return s;}
+function serial(txt){
+  var m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(String(txt||'').trim());
+  if(!m) return null;
+  return Math.round((Date.UTC(+m[1],+m[2]-1,+m[3])-Date.UTC(1899,11,30))/86400000);
+}
+
+var STYLE='<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'+
+'<styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">'+
+'<numFmts count="1"><numFmt numFmtId="164" formatCode="dd.mm.yyyy"/></numFmts>'+
+'<fonts count="2"><font><sz val="11"/><name val="Calibri"/></font>'+
+'<font><b/><sz val="11"/><color rgb="FFFFFFFF"/><name val="Calibri"/></font></fonts>'+
+'<fills count="3"><fill><patternFill patternType="none"/></fill>'+
+'<fill><patternFill patternType="gray125"/></fill>'+
+'<fill><patternFill patternType="solid"><fgColor rgb="FF5B8FCE"/><bgColor indexed="64"/></patternFill></fill></fills>'+
+'<borders count="1"><border><left/><right/><top/><bottom/><diagonal/></border></borders>'+
+'<cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs>'+
+'<cellXfs count="3">'+
+'<xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/>'+
+'<xf numFmtId="0" fontId="1" fillId="2" borderId="0" xfId="0" applyFont="1" applyFill="1"/>'+
+'<xf numFmtId="164" fontId="0" fillId="0" borderId="0" xfId="0" applyNumberFormat="1"/>'+
+'</cellXfs>'+'<cellStyles count="1"><cellStyle name="Normal" xfId="0" builtinId="0"/></cellStyles>'+'</styleSheet>';
+
+function arkusz(naglowki,wiersze){
+  var cols='<cols>'+naglowki.map(function(h,i){
+    return '<col min="'+(i+1)+'" max="'+(i+1)+'" width="'+h.szer+'" customWidth="1"/>';}).join('')+'</cols>';
+  var body='<row r="1">'+naglowki.map(function(h,i){
+    return '<c r="'+kol(i)+'1" s="1" t="inlineStr"><is><t xml:space="preserve">'+esc(h.tytul)+'</t></is></c>';}).join('')+'</row>';
+  wiersze.forEach(function(w,ri){
+    var nr=ri+2;
+    body+='<row r="'+nr+'">'+w.map(function(v,ci){
+      if(v===null||v===undefined||v==='') return '';
+      var ref=kol(ci)+nr;
+      var s=(naglowki[ci]&&naglowki[ci].data)?serial(v):null;
+      if(s!==null) return '<c r="'+ref+'" s="2"><v>'+s+'</v></c>';
+      if(typeof v==='number'&&isFinite(v)) return '<c r="'+ref+'"><v>'+v+'</v></c>';
+      return '<c r="'+ref+'" t="inlineStr"><is><t xml:space="preserve">'+esc(v)+'</t></is></c>';
+    }).join('')+'</row>';
+  });
+  return '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'+
+    '<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">'+
+    '<sheetViews><sheetView workbookViewId="0"><pane ySplit="1" topLeftCell="A2" activePane="bottomLeft" state="frozen"/></sheetView></sheetViews>'+
+    '<sheetFormatPr defaultRowHeight="15"/>'+cols+
+    '<sheetData>'+body+'</sheetData>'+
+    '<autoFilter ref="A1:'+kol(naglowki.length-1)+(wiersze.length+1)+'"/></worksheet>';
+}
+
+var NS='http://schemas.openxmlformats.org/officeDocument/2006/relationships';
+function xlsx(naglowki,wiersze){
+  return zip([
+    {nazwa:'[Content_Types].xml',tresc:'<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'+
+      '<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">'+
+      '<Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>'+
+      '<Default Extension="xml" ContentType="application/xml"/>'+
+      '<Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/>'+
+      '<Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>'+
+      '<Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/></Types>'},
+    {nazwa:'_rels/.rels',tresc:'<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'+
+      '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">'+
+      '<Relationship Id="rId1" Type="'+NS+'/officeDocument" Target="xl/workbook.xml"/></Relationships>'},
+    {nazwa:'xl/workbook.xml',tresc:'<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'+
+      '<workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="'+NS+'">'+
+      '<sheets><sheet name="Rejestr" sheetId="1" r:id="rId1"/></sheets></workbook>'},
+    {nazwa:'xl/_rels/workbook.xml.rels',tresc:'<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'+
+      '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">'+
+      '<Relationship Id="rId1" Type="'+NS+'/worksheet" Target="worksheets/sheet1.xml"/>'+
+      '<Relationship Id="rId2" Type="'+NS+'/styles" Target="styles.xml"/></Relationships>'},
+    {nazwa:'xl/styles.xml',tresc:STYLE},
+    {nazwa:'xl/worksheets/sheet1.xml',tresc:arkusz(naglowki,wiersze)}
+  ]);
+}
+
+/* ── 3. Rejestr ── */
+var KLUCZ='pl_rejestr_senior_v2';
+var ZRODLO='senior';
+
+/* ══ WYSYŁKA DO ARKUSZA GOOGLE ══════════════════════════════════════
+   Uzupełnij oba pola adresem aplikacji internetowej Apps Script
+   i wspólnym kluczem. Puste = wysyłka wyłączona, rejestr działa
+   jak dotąd, tylko lokalnie. */
+var ARKUSZ_URL = 'https://script.google.com/macros/s/AKfycbx1hHy4i5lzR1OUMYvEW9o9eTrX4oHKps9xVcS4zQ1sAmLgt5u5mq0kRMMnafDKfw26/exec';
+var ARKUSZ_KLUCZ = 'DLVKX-DLP9H-RO9BL-O2ZBZ';
+
+function idWiersza(w){ return ZRODLO+'|'+[w[0],w[1],w[2]].join('|').toLowerCase().replace(/\s+/g,' ').trim(); }
+function wyslaneID(){ try{ return JSON.parse(localStorage.getItem(KLUCZ+'_wyslane')||'[]'); }catch(e){ return []; } }
+function zapiszWyslane(l){ try{ localStorage.setItem(KLUCZ+'_wyslane', JSON.stringify(l)); }catch(e){} }
+function oznaczWyslany(id){ var l=wyslaneID(); if(l.indexOf(id)<0){ l.push(id); zapiszWyslane(l); } }
+function cofnijWyslany(id){ var l=wyslaneID(), i=l.indexOf(id); if(i>=0){ l.splice(i,1); zapiszWyslane(l); } }
+function ileCzeka(){ var l=wyslaneID(); return czytaj().filter(function(w){ return l.indexOf(idWiersza(w))<0; }).length; }
+
+function wyslij(w){
+  if(!ARKUSZ_URL) return Promise.resolve({ok:false, powod:'wyłączone'});
+  var id=idWiersza(w);
+  return fetch(ARKUSZ_URL, {
+    method:'POST',
+    headers:{'Content-Type':'text/plain;charset=utf-8'},
+    body: JSON.stringify({ klucz:ARKUSZ_KLUCZ, zrodlo:ZRODLO, id:id,
+                           naglowki:NAGLOWKI.map(function(h){return h.tytul;}), wiersz:w })
+  }).then(function(o){ return o.json(); })
+    .then(function(d){
+      if(d && d.ok){ oznaczWyslany(id); return {ok:true}; }
+      return {ok:false, powod:(d&&d.blad)||'arkusz odmówił zapisu'};
+    })
+    .catch(function(){ return {ok:false, powod:'brak połączenia'}; });
+}
+
+function wyslijZalegle(){
+  if(!ARKUSZ_URL){ alert('Wysyłka do arkusza nie jest jeszcze skonfigurowana.'); return; }
+  var l=wyslaneID();
+  var doWyslania=czytaj().filter(function(w){ return l.indexOf(idWiersza(w))<0; });
+  if(!doWyslania.length){ alert('Wszystko jest już w arkuszu — nic nie czeka.'); return; }
+  var ok=0, bledy=[];
+  (function nastepny(i){
+    if(i>=doWyslania.length){
+      odswiez();
+      alert('Wysłano do arkusza: '+ok+' z '+doWyslania.length+'.'+(bledy.length?'\n\nNie poszło: '+bledy[0]:''));
+      return;
+    }
+    wyslij(doWyslania[i]).then(function(r){
+      if(r.ok) ok++; else if(bledy.indexOf(r.powod)<0) bledy.push(r.powod);
+      odswiez();
+      nastepny(i+1);
+    });
+  })(0);
+}
+
+var NAZWA='Ewaluator Senior — rejestr';
+var NAGLOWKI=[
+  {tytul:'Data ewaluacji',szer:14,data:true},
+  {tytul:'Imię',szer:14},{tytul:'Nazwisko',szer:16},
+  {tytul:'Telefon',szer:16},{tytul:'E-mail',szer:26},
+  {tytul:'Lektor / metodyk',szer:18},{tytul:'Lokalizacja',szer:30},
+  {tytul:'Grupa wiekowa',szer:20},
+  {tytul:'Poziom ogólny',szer:13},
+  {tytul:'Listening',szer:11},{tytul:'Listening — ocena',szer:16},
+  {tytul:'Reading',szer:11},{tytul:'Reading — ocena',szer:16},
+  {tytul:'Writing',szer:11},{tytul:'Writing — ocena',szer:16},
+  {tytul:'Speaking',szer:11},{tytul:'Speaking — ocena',szer:16},
+  {tytul:'Kurs / kursy',szer:34},
+  {tytul:'Sugerowana grupa',szer:34},{tytul:'Status',szer:18},
+  {tytul:'Mocne strony',szer:40},{tytul:'Do poprawy',szer:40},{tytul:'Uwagi końcowe',szer:40}
+];
+
+function zbierzWiersz(){
+  var v=function(id){var e=document.getElementById(id);return e?String(e.value||'').trim():'';};
+  var imie=v('fname'), nazwisko=v('lname');
+  if(!imie && !nazwisko) return null;
+  var WIEK={child:'Dziecko (7–11 lat)',teen:'Nastolatek (11–14 lat)',teen2:'Nastolatek (14–18 lat)',adult:'Dorosły (18+)'};
+  var S=['l','r','w','s'], wyn={}, i;
+  for(i=0;i<S.length;i++){ wyn[S[i]]=calcSkillLevel(S[i]) || {}; }
+  var ogolem=calcOverall(wyn)||'';
+  var kursy=[], chipy=document.querySelectorAll('#course-chips-lektor .course-chip.selected');
+  for(i=0;i<chipy.length;i++){ kursy.push(String(chipy[i].textContent||'').trim()); }
+  return [
+    v('evalDate'), imie, nazwisko, v('telefon'), v('email'),
+    v('lektor'), v('location'), WIEK[v('ageType')]||v('ageType'),
+    ogolem,
+    wyn.l.level||'', wyn.l.rating||'',
+    wyn.r.level||'', wyn.r.rating||'',
+    wyn.w.level||'', wyn.w.rating||'',
+    wyn.s.level||'', wyn.s.rating||'',
+    kursy.join(', '),
+    v('note-grupa'), v('note-status'),
+    v('note-strengths'), v('note-improve'), v('note-final')
+  ];
+}
+
+function czytaj(){try{var s=localStorage.getItem(KLUCZ);return s?JSON.parse(s):[];}catch(e){return [];}}
+function pisz(a){try{localStorage.setItem(KLUCZ,JSON.stringify(a));return true;}catch(e){return false;}}
+function klucz(w){return [w[0],w[1],w[2]].join('|').toLowerCase().replace(/\s+/g,' ').trim();}
+
+function dopisz(){
+  var w;
+  try{ w=zbierzWiersz(); }catch(e){ alert('Nie udało się odczytać wyniku ewaluacji.'); return; }
+  if(!w){ alert('Najpierw uzupełnij imię lub nazwisko ucznia — bez tego nie ma czego dopisać do rejestru.'); return; }
+  var rej=czytaj(),k=klucz(w),i=-1,j;
+  for(j=0;j<rej.length;j++){ if(klucz(rej[j])===k){ i=j; break; } }
+  if(i>=0){
+    if(!confirm('W rejestrze jest już wpis dla tej osoby z tą datą.\n\nZastąpić go dzisiejszym wynikiem?')) return;
+    rej[i]=w;
+  } else { rej.push(w); }
+  if(!pisz(rej)){ alert('Nie udało się zapisać rejestru w tej przeglądarce (może być pełna pamięć albo tryb prywatny).'); return; }
+  if(i>=0) cofnijWyslany(idWiersza(w));   /* poprawiony wpis ma pójść do arkusza jeszcze raz */
+  odswiez();
+  if(ARKUSZ_URL) wyslij(w).then(odswiez);
+  alert((i>=0?'Wpis zaktualizowany.':'Dopisano do rejestru.')+'\n\nW rejestrze jest teraz '+rej.length+' '+(rej.length===1?'ewaluacja':(rej.length<5?'ewaluacje':'ewaluacji'))+'.');
+}
+
+function pobierz(){
+  var rej=czytaj();
+  if(!rej.length){ alert('Rejestr jest pusty. Najpierw kliknij „Dopisz do rejestru” przy zakończonej ewaluacji.'); return; }
+  var dane,blob,url,a,d,p;
+  try{ dane=xlsx(NAGLOWKI,rej); }catch(e){ alert('Nie udało się zbudować pliku Excela.'); return; }
+  blob=new Blob([dane],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+  d=new Date(); p=function(n){return (n<10?'0':'')+n;};
+  url=URL.createObjectURL(blob);
+  a=document.createElement('a');
+  a.href=url;
+  a.download=NAZWA+' '+d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())+'.xlsx';
+  document.body.appendChild(a); a.click();
+  setTimeout(function(){ URL.revokeObjectURL(url); if(a.parentNode) a.parentNode.removeChild(a); },2000);
+}
+
+function wyczysc(){
+  var rej=czytaj();
+  if(!rej.length){ alert('Rejestr jest już pusty.'); return; }
+  if(!confirm('Usunąć z rejestru wszystkie wpisy ('+rej.length+')?\n\nNajpierw pobierz plik Excela — tego nie da się cofnąć.')) return;
+  try{ localStorage.removeItem(KLUCZ); }catch(e){}
+  odswiez();
+}
+
+function odswiez(){
+  var n=czytaj().length,el=document.querySelectorAll('[data-rejestr-licznik]'),i;
+  for(i=0;i<el.length;i++){ el[i].textContent = n ? '📊 Pobierz Excel ('+n+')' : '📊 Pobierz Excel'; }
+  var wiersze=document.querySelectorAll('[data-arkusz-wiersz]');
+  for(i=0;i<wiersze.length;i++){ wiersze[i].style.display = ARKUSZ_URL ? 'flex' : 'none'; }
+  if(!ARKUSZ_URL) return;
+  var czeka=ileCzeka();
+  var st=document.querySelectorAll('[data-arkusz-status]');
+  for(i=0;i<st.length;i++){
+    st[i].textContent = czeka
+      ? '☁️ Arkusz Google: czeka '+czeka+' '+(czeka===1?'wpis':(czeka<5?'wpisy':'wpisów'))+' na wysłanie'
+      : (n ? '☁️ Arkusz Google: wszystko wysłane' : '☁️ Arkusz Google: podłączony');
+  }
+}
+
+window.PLRejestr={dopisz:dopisz,pobierz:pobierz,wyczysc:wyczysc,odswiez:odswiez,
+  wyslijZalegle:wyslijZalegle,ileCzeka:ileCzeka,ile:function(){return czytaj().length;}};
+function start(){
+  odswiez();
+  if(!ARKUSZ_URL) return;
+  var l=wyslaneID();
+  var zalegle=czytaj().filter(function(w){ return l.indexOf(idWiersza(w))<0; });
+  /* po cichu, bez okienek — jeśli nie wyjdzie, wpisy dalej czekają */
+  zalegle.slice(0,5).forEach(function(w){ wyslij(w).then(odswiez); });
+}
+if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',start); else start();
+})();
 </script>
 </body>
 </html>
